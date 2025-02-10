@@ -4,7 +4,7 @@ export function SiteFooter() {
       <div className="container-wrapper">
         <div className="container py-4">
           <div className="text-muted-foreground text-balance text-center text-sm leading-loose md:text-left">
-            Built by shadcn
+            Built by Jay Sloan
           </div>
         </div>
       </div>
