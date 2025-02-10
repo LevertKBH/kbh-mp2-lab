@@ -76,21 +76,26 @@ model AuditLog {
 }
 
 model User {
-  id                String            @id
-  name              String
-  email             String
-  emailVerified     Boolean
-  image             String?
-  createdAt         DateTime
-  updatedAt         DateTime
-  sessions          Session[]
-  accounts          Account[]
-  members           Member[]
-  invitations       Invitation[]
-  downtimes         Downtime[]
-  deleted_downtimes DeletedDowntime[]
-  deleted_users     DeletedUser[]
-  audit_logs        AuditLog[]
+  id              String            @id
+  name            String
+  email           String
+  emailVerified   Boolean
+  image           String?
+  createdAt       DateTime
+  updatedAt       DateTime
+  sessions        Session[]
+  accounts        Account[]
+  members         Member[]
+  invitations     Invitation[]
+  auditLogs       AuditLog[]
+  downtime        Downtime[]
+  deletedDowntime DeletedDowntime[]
+  deletedUser     DeletedUser[]
+
+  role       String?
+  banned     Boolean?
+  banReason  String?
+  banExpires DateTime?
 
   @@unique([email])
   @@map("user")
@@ -107,6 +112,8 @@ model Session {
   userId               String
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   activeOrganizationId String?
+
+  impersonatedBy String?
 
   @@unique([token])
   @@map("session")
