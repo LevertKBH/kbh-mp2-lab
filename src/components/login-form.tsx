@@ -48,7 +48,7 @@ export function LoginForm({
         return;
       }
 
-      router.replace("/dashboard");
+      router.replace("/dashboard/entries");
     } catch (error) {
       toast.error("Invalid email or password", {
         description: error as string,

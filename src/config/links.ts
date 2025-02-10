@@ -8,17 +8,17 @@ export const linksConfig: LinksConfig = {
   mainNav: [
     {
       title: "Entries",
-      href: "/authenticated/entries",
+      href: "/dashboard/entries",
       requiresAdmin: false,
     },
     {
       title: "Users",
-      href: "/authenticated/users",
+      href: "/dashboard/users",
       requiresAdmin: true,
     },
     {
       title: "Audit",
-      href: "/authenticated/audit",
+      href: "/dashboard/audit",
       requiresAdmin: true,
     },
   ],
