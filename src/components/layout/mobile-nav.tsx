@@ -7,9 +7,14 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { linksConfig } from "@/config/links";
+import { type authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
-export function MobileNav() {
+export function MobileNav({
+  session,
+}: {
+  session: typeof authClient.$Infer.Session;
+}) {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -39,18 +44,20 @@ export function MobileNav() {
       <DrawerContent className="max-h-[60svh] p-0">
         <div className="overflow-auto p-6">
           <div className="flex flex-col space-y-3">
-            {linksConfig.mainNav?.map(
-              (item) =>
-                item.href && (
-                  <MobileLink
-                    key={item.href}
-                    href={item.href}
-                    onOpenChange={setOpen}
-                  >
-                    {item.title}
-                  </MobileLink>
-                ),
-            )}
+            {linksConfig.mainNav.map((link) => {
+              if (link.requiresAdmin && session.user.role !== "admin") {
+                return null;
+              }
+              return (
+                <MobileLink
+                  key={link.href}
+                  href={link.href ?? ""}
+                  onOpenChange={setOpen}
+                >
+                  {link.title}
+                </MobileLink>
+              );
+            })}
           </div>
         </div>
       </DrawerContent>

@@ -31,6 +31,22 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard/entries", request.url));
   }
 
+  if (
+    session &&
+    request.nextUrl.pathname === "/dashboard/users" &&
+    session.user.role !== "admin"
+  ) {
+    return NextResponse.redirect(new URL("/dashboard/entries", request.url));
+  }
+
+  if (
+    session &&
+    request.nextUrl.pathname === "/dashboard/audit" &&
+    session.user.role !== "admin"
+  ) {
+    return NextResponse.redirect(new URL("/dashboard/entries", request.url));
+  }
+
   return NextResponse.next();
 }
 

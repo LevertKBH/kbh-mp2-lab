@@ -4,10 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { linksConfig } from "@/config/links";
+import { type authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { Icons } from "../shared/icons";
 
-export function MainNav() {
+export function MainNav({
+  session,
+}: {
+  session: typeof authClient.$Infer.Session;
+}) {
   const pathname = usePathname();
 
   return (
@@ -21,6 +26,9 @@ export function MainNav() {
       </Link>
       <nav className="flex items-center gap-4 text-sm xl:gap-6">
         {linksConfig.mainNav.map((link) => {
+          if (link.requiresAdmin && session.user.role !== "admin") {
+            return null;
+          }
           return (
             <Link
               key={link.href}
