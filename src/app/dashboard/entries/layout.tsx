@@ -1,5 +1,7 @@
+import CreateEntryDialog from "@/components/entries/create-entry-dialog";
 import PageLayout from "@/components/layout/page-layout";
 import {
+  PageActions,
   PageHeader,
   PageHeaderDescription,
   PageHeaderHeading,
@@ -17,6 +19,9 @@ export default function MainLayout({
         <PageHeaderDescription>
           View and manage your entries.
         </PageHeaderDescription>
+        <PageActions>
+          <CreateEntryDialog />
+        </PageActions>
       </PageHeader>
       <PageLayout>{children}</PageLayout>
     </>

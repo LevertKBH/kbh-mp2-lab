@@ -3,12 +3,66 @@ BEGIN TRY
 BEGIN TRAN;
 
 -- CreateTable
-CREATE TABLE [dbo].[Post] (
-    [id] INT NOT NULL IDENTITY(1,1),
+CREATE TABLE [dbo].[downtime] (
+    [id] NVARCHAR(1000) NOT NULL,
+    [start_date] NVARCHAR(1000) NOT NULL,
+    [end_date] NVARCHAR(1000),
+    [plant_category] NVARCHAR(1000) NOT NULL CONSTRAINT [downtime_plant_category_df] DEFAULT 'Plant Outage',
+    [plant_section] NVARCHAR(1000) NOT NULL,
+    [discipline] NVARCHAR(1000) NOT NULL,
+    [plant_equipment] NVARCHAR(1000) NOT NULL,
+    [breakdown_description] NVARCHAR(1000) NOT NULL,
+    [notes] NVARCHAR(1000),
+    [userId] NVARCHAR(1000) NOT NULL,
+    [created_at] DATETIME2 CONSTRAINT [downtime_created_at_df] DEFAULT CURRENT_TIMESTAMP,
+    [updated_at] DATETIME2 CONSTRAINT [downtime_updated_at_df] DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT [downtime_pkey] PRIMARY KEY CLUSTERED ([id]),
+    CONSTRAINT [downtime_id_key] UNIQUE NONCLUSTERED ([id])
+);
+
+-- CreateTable
+CREATE TABLE [dbo].[deleted_downtime] (
+    [id] NVARCHAR(1000) NOT NULL,
+    [start_date] NVARCHAR(1000) NOT NULL,
+    [end_date] NVARCHAR(1000),
+    [plant_category] NVARCHAR(1000) NOT NULL CONSTRAINT [deleted_downtime_plant_category_df] DEFAULT 'Plant Outage',
+    [plant_section] NVARCHAR(1000) NOT NULL,
+    [discipline] NVARCHAR(1000) NOT NULL,
+    [plant_equipment] NVARCHAR(1000) NOT NULL,
+    [breakdown_description] NVARCHAR(1000) NOT NULL,
+    [notes] NVARCHAR(1000),
+    [userId] NVARCHAR(1000) NOT NULL,
+    [created_at] DATETIME2 CONSTRAINT [deleted_downtime_created_at_df] DEFAULT CURRENT_TIMESTAMP,
+    [updated_at] DATETIME2 CONSTRAINT [deleted_downtime_updated_at_df] DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT [deleted_downtime_pkey] PRIMARY KEY CLUSTERED ([id]),
+    CONSTRAINT [deleted_downtime_id_key] UNIQUE NONCLUSTERED ([id])
+);
+
+-- CreateTable
+CREATE TABLE [dbo].[deleted_user] (
+    [id] NVARCHAR(1000) NOT NULL,
     [name] NVARCHAR(1000) NOT NULL,
-    [createdat] DATETIME2 NOT NULL CONSTRAINT [Post_createdat_df] DEFAULT CURRENT_TIMESTAMP,
-    [updatedat] DATETIME2 NOT NULL,
-    CONSTRAINT [Post_pkey] PRIMARY KEY CLUSTERED ([id])
+    [role] NVARCHAR(1000) NOT NULL,
+    [identifier] NVARCHAR(1000) NOT NULL,
+    [userId] NVARCHAR(1000) NOT NULL,
+    [created_at] DATETIME2 CONSTRAINT [deleted_user_created_at_df] DEFAULT CURRENT_TIMESTAMP,
+    [updated_at] DATETIME2 CONSTRAINT [deleted_user_updated_at_df] DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT [deleted_user_pkey] PRIMARY KEY CLUSTERED ([id]),
+    CONSTRAINT [deleted_user_id_key] UNIQUE NONCLUSTERED ([id])
+);
+
+-- CreateTable
+CREATE TABLE [dbo].[audit_log] (
+    [id] NVARCHAR(1000) NOT NULL,
+    [action] NVARCHAR(1000) NOT NULL,
+    [entity_type] NVARCHAR(1000) NOT NULL,
+    [entity_id] NVARCHAR(1000) NOT NULL,
+    [description] NVARCHAR(1000) NOT NULL,
+    [metadata] NVARCHAR(1000),
+    [userId] NVARCHAR(1000) NOT NULL,
+    [created_at] DATETIME2 NOT NULL CONSTRAINT [audit_log_created_at_df] DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT [audit_log_pkey] PRIMARY KEY CLUSTERED ([id]),
+    CONSTRAINT [audit_log_id_key] UNIQUE NONCLUSTERED ([id])
 );
 
 -- CreateTable
@@ -20,6 +74,10 @@ CREATE TABLE [dbo].[user] (
     [image] NVARCHAR(1000),
     [createdAt] DATETIME2 NOT NULL,
     [updatedAt] DATETIME2 NOT NULL,
+    [role] NVARCHAR(1000),
+    [banned] BIT,
+    [banReason] NVARCHAR(1000),
+    [banExpires] DATETIME2,
     CONSTRAINT [user_pkey] PRIMARY KEY CLUSTERED ([id]),
     CONSTRAINT [user_email_key] UNIQUE NONCLUSTERED ([email])
 );
@@ -35,6 +93,7 @@ CREATE TABLE [dbo].[session] (
     [userAgent] NVARCHAR(1000),
     [userId] NVARCHAR(1000) NOT NULL,
     [activeOrganizationId] NVARCHAR(1000),
+    [impersonatedBy] NVARCHAR(1000),
     CONSTRAINT [session_pkey] PRIMARY KEY CLUSTERED ([id]),
     CONSTRAINT [session_token_key] UNIQUE NONCLUSTERED ([token])
 );
@@ -102,8 +161,17 @@ CREATE TABLE [dbo].[invitation] (
     CONSTRAINT [invitation_pkey] PRIMARY KEY CLUSTERED ([id])
 );
 
--- CreateIndex
-CREATE NONCLUSTERED INDEX [Post_name_idx] ON [dbo].[Post]([name]);
+-- AddForeignKey
+ALTER TABLE [dbo].[downtime] ADD CONSTRAINT [downtime_userId_fkey] FOREIGN KEY ([userId]) REFERENCES [dbo].[user]([id]) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE [dbo].[deleted_downtime] ADD CONSTRAINT [deleted_downtime_userId_fkey] FOREIGN KEY ([userId]) REFERENCES [dbo].[user]([id]) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE [dbo].[deleted_user] ADD CONSTRAINT [deleted_user_userId_fkey] FOREIGN KEY ([userId]) REFERENCES [dbo].[user]([id]) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE [dbo].[audit_log] ADD CONSTRAINT [audit_log_userId_fkey] FOREIGN KEY ([userId]) REFERENCES [dbo].[user]([id]) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE [dbo].[session] ADD CONSTRAINT [session_userId_fkey] FOREIGN KEY ([userId]) REFERENCES [dbo].[user]([id]) ON DELETE CASCADE ON UPDATE CASCADE;

@@ -12,7 +12,6 @@ datasource db {
 
 model Downtime {
   id                    String    @id @unique @default(cuid())
-  status                String    @default("down")
   start_date            String
   end_date              String?
   plant_category        String    @default("Plant Outage")
@@ -31,7 +30,6 @@ model Downtime {
 
 model DeletedDowntime {
   id                    String    @id @unique @default(cuid())
-  status                String    @default("down")
   start_date            String
   end_date              String?
   plant_category        String    @default("Plant Outage")

@@ -126,3 +126,26 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
     },
   });
 });
+
+export const adminProcedure = t.procedure.use(async ({ ctx, next }) => {
+  if (!ctx.session) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You must be logged in to access this procedure.",
+    });
+  }
+
+  if (ctx.session.user.role !== "admin") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You must be an admin to access this procedure.",
+    });
+  }
+
+  return next({
+    ctx: {
+      session: ctx.session,
+      user: ctx.session.user,
+    },
+  });
+});
