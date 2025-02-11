@@ -60,15 +60,17 @@ model DeletedUser {
 }
 
 model AuditLog {
-  id          String   @id @unique @default(cuid())
-  action      String
-  entity_type String
-  entity_id   String
-  description String
-  metadata    String?
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  created_at  DateTime @default(now())
+  id                      String   @id @unique @default(cuid())
+  action                  String
+  entity_type             String
+  entity_id               String
+  description             String
+  metadata                String?
+  performed_by_name       String?
+  performed_by_identifier String?
+  userId                  String
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  created_at              DateTime @default(now())
 
   @@map("audit_log")
 }

@@ -54,6 +54,7 @@ export default function ResolveEntryDialog({
     onSuccess: async () => {
       form.reset();
       await utils.entries.invalidate();
+      await utils.audit.invalidate();
       toast.success("Entry resolved", {
         description: "Entry has been resolved successfully",
       });

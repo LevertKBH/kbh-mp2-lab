@@ -56,6 +56,7 @@ export default function CreateEntryDialog() {
     onSuccess: async () => {
       form.reset();
       await utils.entries.invalidate();
+      await utils.audit.invalidate();
       setIsOpen(false);
       toast.success("Entry created", {
         description: "Entry has been created successfully",

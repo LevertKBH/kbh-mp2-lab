@@ -74,6 +74,7 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
     onSuccess: async () => {
       form.reset();
       await utils.entries.invalidate();
+      await utils.audit.invalidate();
       toast.success("Entry updated successfully");
       onOpenChange(false);
     },
