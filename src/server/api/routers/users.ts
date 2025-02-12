@@ -58,6 +58,7 @@ export const usersRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const { userId, role } = input;
+
       if (ctx.user.id === userId) {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -65,11 +66,32 @@ export const usersRouter = createTRPCRouter({
         });
       }
 
+      const userBeforeUpdate = await ctx.db.user.findUnique({
+        where: { id: userId },
+      });
+
       await auth.api.setRole({
         headers: await headers(),
         body: {
           userId: userId,
           role: role,
+        },
+      });
+
+      await ctx.db.auditLog.create({
+        data: {
+          userId: ctx.user.id,
+          description: "Updated role",
+          action: "update",
+          entity_type: "user",
+          entity_id: userId,
+          performed_by_name: ctx.user.name,
+          performed_by_identifier: ctx.user.email,
+          metadata: JSON.stringify({
+            user: userBeforeUpdate,
+            oldRole: userBeforeUpdate?.role,
+            newRole: role,
+          }),
         },
       });
     }),
@@ -86,6 +108,21 @@ export const usersRouter = createTRPCRouter({
           role,
         },
       });
+
+      await ctx.db.auditLog.create({
+        data: {
+          userId: ctx.user.id,
+          description: "Created user",
+          action: "create",
+          entity_type: "user",
+          entity_id: user.id,
+          performed_by_name: ctx.user.name,
+          performed_by_identifier: ctx.user.email,
+          metadata: JSON.stringify({
+            user,
+          }),
+        },
+      });
     }),
   banUser: adminProcedure
     .input(
@@ -96,15 +133,56 @@ export const usersRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const { userId, banReason } = input;
+
+      const userToBan = await ctx.db.user.findUnique({
+        where: { id: userId },
+      });
+
       await auth.api.banUser({
         headers: await headers(),
         body: { userId, banReason },
+      });
+
+      await ctx.db.auditLog.create({
+        data: {
+          userId: ctx.user.id,
+          description: "Banned user",
+          action: "ban",
+          entity_type: "user",
+          entity_id: userId,
+          performed_by_name: ctx.user.name,
+          performed_by_identifier: ctx.user.email,
+          metadata: JSON.stringify({
+            user: userToBan,
+            banReason,
+          }),
+        },
       });
     }),
   unbanUser: adminProcedure
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const { userId } = input;
+
+      const userBeforeUnban = await ctx.db.user.findUnique({
+        where: { id: userId },
+      });
+
       await auth.api.unbanUser({ headers: await headers(), body: { userId } });
+
+      await ctx.db.auditLog.create({
+        data: {
+          userId: ctx.user.id,
+          description: "Unbanned user",
+          action: "unban",
+          entity_type: "user",
+          entity_id: userId,
+          performed_by_name: ctx.user.name,
+          performed_by_identifier: ctx.user.email,
+          metadata: JSON.stringify({
+            user: userBeforeUnban,
+          }),
+        },
+      });
     }),
 });

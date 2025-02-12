@@ -31,6 +31,7 @@ export function ConfirmUnbanDialog({
   const unbanUser = api.users.unbanUser.useMutation({
     onSuccess: async () => {
       await utils.users.getAllUsers.invalidate();
+      await utils.audit.getAllAudits.invalidate();
       toast.success("User unbanned successfully");
       onOpenChange(false);
     },

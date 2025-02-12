@@ -47,6 +47,7 @@ const BanUserDialog: FC<BanUserDialogProps> = ({
   const banUser = api.users.banUser.useMutation({
     onSuccess: async () => {
       await utils.users.getAllUsers.invalidate();
+      await utils.audit.getAllAudits.invalidate();
       toast.success("User banned successfully");
       onOpenChange(false);
     },

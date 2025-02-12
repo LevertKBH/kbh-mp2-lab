@@ -15,6 +15,14 @@ export const actions = [
     value: "resolve",
     label: "Resolve",
   },
+  {
+    value: "ban",
+    label: "Ban",
+  },
+  {
+    value: "unban",
+    label: "Unban",
+  },
 ];
 
 export const entity_types = [
