@@ -94,7 +94,7 @@ export default function CreateUserDialog() {
               name="name"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-name`}>Name</FormLabel>
+                  <FormLabel htmlFor={`${id}-name`}>Full Name</FormLabel>
                   <FormControl>
                     <Input
                       id={`${id}-name`}

@@ -28,7 +28,6 @@ type ResponsiveModalWithTrigger = {
 
 type ResponsiveModalWithoutTrigger = {
   hasTrigger: false;
-  trigger: null;
 };
 
 type ResponsiveModalProps = {

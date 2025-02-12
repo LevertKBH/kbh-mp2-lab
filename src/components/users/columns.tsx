@@ -10,6 +10,20 @@ import UserRowActions from "./row-actions";
 
 export const usersColumns: ColumnDef<UserWithRole>[] = [
   {
+    accessorKey: "banned",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
+    cell: ({ row }) => {
+      const banned = row.original.banned;
+      return (
+        <Badge variant={banned ? "destructive" : "outline"}>
+          {banned ? "Banned" : "Active"}
+        </Badge>
+      );
+    },
+  },
+  {
     accessorKey: "name",
     header: "Name",
   },

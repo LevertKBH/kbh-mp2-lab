@@ -4,6 +4,10 @@ export const actions = [
     label: "Create",
   },
   {
+    value: "update",
+    label: "Update",
+  },
+  {
     value: "delete",
     label: "Delete",
   },

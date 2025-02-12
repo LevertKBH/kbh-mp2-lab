@@ -1,8 +1,5 @@
-import { api } from "@/trpc/react";
-import { type UserWithRole } from "better-auth/plugins";
-import { type FC } from "react";
-import { toast } from "sonner";
-import { Icons } from "../shared/icons";
+"use client";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,54 +9,60 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "../ui/alert-dialog";
+} from "@/components/ui/alert-dialog";
+import { api } from "@/trpc/react";
+import { type UserWithRole } from "better-auth/plugins";
+import { toast } from "sonner";
+import { Icons } from "../shared/icons";
 
-interface ConfirmDeleteUserDialogProps {
+interface ConfirmUnbanDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   user: UserWithRole;
 }
 
-const ConfirmDeleteUserDialog: FC<ConfirmDeleteUserDialogProps> = ({
+export function ConfirmUnbanDialog({
   open,
   onOpenChange,
   user,
-}) => {
+}: ConfirmUnbanDialogProps) {
   const utils = api.useUtils();
 
-  const deleteUser = api.users.deleteUser.useMutation({
+  const unbanUser = api.users.unbanUser.useMutation({
     onSuccess: async () => {
       await utils.users.getAllUsers.invalidate();
-      toast.success("User deleted successfully");
+      toast.success("User unbanned successfully");
+      onOpenChange(false);
     },
     onError: (error) => {
-      toast.error("Failed to delete user", {
+      toast.error("Failed to unban user", {
         description: error instanceof Error ? error.message : "Unknown error",
       });
     },
   });
-
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete this
-            user.
+            This will unban the user and allow them to access the platform
+            again.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deleteUser.isPending}>
+          <AlertDialogCancel
+            onClick={() => onOpenChange(false)}
+            disabled={unbanUser.isPending}
+          >
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={() => deleteUser.mutate({ userId: user.id })}
-            className="bg-destructive text-destructive-foreground"
-            disabled={deleteUser.isPending}
+            onClick={() => unbanUser.mutate({ userId: user.id })}
+            disabled={unbanUser.isPending}
           >
-            {deleteUser.isPending && (
-              <Icons.spinner className="h-4 w-4 animate-spin" />
+            {unbanUser.isPending && (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
             Continue
           </AlertDialogAction>
@@ -67,6 +70,4 @@ const ConfirmDeleteUserDialog: FC<ConfirmDeleteUserDialogProps> = ({
       </AlertDialogContent>
     </AlertDialog>
   );
-};
-
-export default ConfirmDeleteUserDialog;
+}

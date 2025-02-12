@@ -87,32 +87,24 @@ export const usersRouter = createTRPCRouter({
         },
       });
     }),
-  deleteUser: adminProcedure
+  banUser: adminProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        banReason: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { userId, banReason } = input;
+      await auth.api.banUser({
+        headers: await headers(),
+        body: { userId, banReason },
+      });
+    }),
+  unbanUser: adminProcedure
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const { userId } = input;
-      const userToDelete = await ctx.db.user.findUnique({
-        where: {
-          id: userId,
-        },
-      });
-
-      if (userToDelete) {
-        await auth.api.removeUser({
-          headers: await headers(),
-          body: {
-            userId: userId,
-          },
-        });
-
-        await ctx.db.deletedUser.create({
-          data: {
-            name: userToDelete.name,
-            role: userToDelete.role!,
-            identifier: userToDelete.email,
-            userId: userId,
-          },
-        });
-      }
+      await auth.api.unbanUser({ headers: await headers(), body: { userId } });
     }),
 });

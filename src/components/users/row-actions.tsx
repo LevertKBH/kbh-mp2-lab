@@ -1,6 +1,6 @@
 import { authClient } from "@/lib/auth-client";
 import { type UserWithRole } from "better-auth/plugins";
-import { MoreHorizontal, PencilIcon, TrashIcon } from "lucide-react";
+import { BanIcon, MoreHorizontal, PencilIcon } from "lucide-react";
 import { type FC, useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -9,7 +9,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import ConfirmDeleteUserDialog from "./confirm-delete-dialog";
+import BanUserDialog from "./ban-dialog";
+import { ConfirmUnbanDialog } from "./confirm-unban-dialog";
 import UpdateUserDialog from "./update-user-dialog";
 
 interface UserRowActionsProps {
@@ -21,6 +22,7 @@ const UserRowActions: FC<UserRowActionsProps> = ({ user }) => {
 
   const [open, setOpen] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
+  const [openUnban, setOpenUnban] = useState(false);
 
   return (
     <DropdownMenu>
@@ -37,24 +39,39 @@ const UserRowActions: FC<UserRowActionsProps> = ({ user }) => {
               onClick={() => setOpenUpdate(true)}
               className="flex items-center justify-between text-destructive"
             >
-              Update
+              Update User
               <PencilIcon className="h-3 w-3" />
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => setOpen(true)}
-              className="flex items-center justify-between text-destructive"
-            >
-              Delete
-              <TrashIcon className="h-3 w-3" />
-            </DropdownMenuItem>
+            {user.banned ? (
+              <DropdownMenuItem
+                onClick={() => setOpenUnban(true)}
+                className="flex items-center justify-between text-destructive"
+              >
+                Unban User
+                <BanIcon className="h-3 w-3" />
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem
+                onClick={() => setOpen(true)}
+                className="flex items-center justify-between text-destructive"
+              >
+                Ban User
+                <BanIcon className="h-3 w-3" />
+              </DropdownMenuItem>
+            )}
           </>
         )}
       </DropdownMenuContent>
-      <ConfirmDeleteUserDialog open={open} onOpenChange={setOpen} user={user} />
+      <BanUserDialog open={open} onOpenChange={setOpen} user={user} />
       <UpdateUserDialog
         user={user}
         open={openUpdate}
         onOpenChange={setOpenUpdate}
+      />
+      <ConfirmUnbanDialog
+        open={openUnban}
+        onOpenChange={setOpenUnban}
+        user={user}
       />
     </DropdownMenu>
   );

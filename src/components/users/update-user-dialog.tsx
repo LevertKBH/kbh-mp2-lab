@@ -1,13 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { api } from "@/trpc/react";
 import {
   type BetterAuthUpdateUser,
@@ -19,6 +12,7 @@ import { useId } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Icons } from "../shared/icons";
+import { ResponsiveModal } from "../shared/responsive-modal";
 import {
   Form,
   FormControl,
@@ -67,8 +61,11 @@ export default function UpdateUserDialog({
   });
 
   return (
-    <Dialog
-      open={open}
+    <ResponsiveModal
+      title="Update User"
+      description="Update the user for this organization."
+      hasTrigger={false}
+      isOpen={open}
       onOpenChange={(open) => {
         if (!open) {
           form.reset();
@@ -76,113 +73,87 @@ export default function UpdateUserDialog({
         onOpenChange(open);
       }}
     >
-      <DialogContent>
-        <div className="flex flex-col items-center gap-2">
-          <div
-            className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border"
-            aria-hidden="true"
-          >
-            <svg
-              className="stroke-zinc-800 dark:stroke-zinc-100"
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 32 32"
-              aria-hidden="true"
-            >
-              <circle cx="16" cy="16" r="12" fill="none" strokeWidth="8" />
-            </svg>
-          </div>
-          <DialogHeader>
-            <DialogTitle className="sm:text-center">Update User</DialogTitle>
-            <DialogDescription className="sm:text-center">
-              Update the user for this organization.
-            </DialogDescription>
-          </DialogHeader>
-        </div>
-
-        <Form {...form}>
-          <form
-            className="space-y-5"
-            onSubmit={form.handleSubmit((data) =>
-              updateRole.mutate({
-                userId: user.id,
-                role: data.role,
-              }),
+      <Form {...form}>
+        <form
+          className="space-y-5"
+          onSubmit={form.handleSubmit((data) =>
+            updateRole.mutate({
+              userId: user.id,
+              role: data.role,
+            }),
+          )}
+        >
+          <FormField
+            control={form.control}
+            name="role"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <RadioGroup
+                    className="gap-2"
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
+                          <RadioGroupItem
+                            value="user"
+                            id={`${id}-user`}
+                            aria-describedby={`${id}-user-description`}
+                            className="order-1 after:absolute after:inset-0"
+                          />
+                          <div className="grid grow gap-1">
+                            <Label htmlFor={`${id}-user`}>Member</Label>
+                            <p
+                              id={`${id}-user-description`}
+                              className="text-xs text-muted-foreground"
+                            >
+                              Not able to access user management
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
+                          <RadioGroupItem
+                            value="admin"
+                            id={`${id}-admin`}
+                            aria-describedby={`${id}-admin-description`}
+                            className="order-1 after:absolute after:inset-0"
+                          />
+                          <div className="grid grow gap-1">
+                            <Label htmlFor={`${id}-admin`}>Admin</Label>
+                            <p
+                              id={`${id}-admin-description`}
+                              className="text-xs text-muted-foreground"
+                            >
+                              Able to access user management
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
+          />
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={updateRole.isPending}
           >
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <RadioGroup
-                      className="gap-2"
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormItem>
-                        <FormControl>
-                          <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
-                            <RadioGroupItem
-                              value="user"
-                              id={`${id}-user`}
-                              aria-describedby={`${id}-user-description`}
-                              className="order-1 after:absolute after:inset-0"
-                            />
-                            <div className="grid grow gap-1">
-                              <Label htmlFor={`${id}-user`}>Member</Label>
-                              <p
-                                id={`${id}-user-description`}
-                                className="text-xs text-muted-foreground"
-                              >
-                                Not able to access user management
-                              </p>
-                            </div>
-                          </div>
-                        </FormControl>
-                      </FormItem>
-                      <FormItem>
-                        <FormControl>
-                          <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
-                            <RadioGroupItem
-                              value="admin"
-                              id={`${id}-admin`}
-                              aria-describedby={`${id}-admin-description`}
-                              className="order-1 after:absolute after:inset-0"
-                            />
-                            <div className="grid grow gap-1">
-                              <Label htmlFor={`${id}-admin`}>Admin</Label>
-                              <p
-                                id={`${id}-admin-description`}
-                                className="text-xs text-muted-foreground"
-                              >
-                                Able to access user management
-                              </p>
-                            </div>
-                          </div>
-                        </FormControl>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={updateRole.isPending}
-            >
-              {updateRole.isPending && (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              Update User
-            </Button>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+            {updateRole.isPending && (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            Update User
+          </Button>
+        </form>
+      </Form>
+    </ResponsiveModal>
   );
 }
