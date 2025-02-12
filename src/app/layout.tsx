@@ -11,7 +11,7 @@ import localFont from "next/font/local";
 export const metadata: Metadata = {
   title: "MP2 Downtime",
   description: "MP2 Downtime",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/favicon.png" }],
 };
 
 const fontSans = localFont({
@@ -43,7 +43,7 @@ export default function RootLayout({
     <html lang="en" className={`${fontSans.variable}`} suppressHydrationWarning>
       <body
         className={cn(
-          "bg-background min-h-svh font-sans antialiased",
+          "min-h-svh bg-background font-sans antialiased",
           fontSans.variable,
         )}
       >
@@ -55,7 +55,7 @@ export default function RootLayout({
           enableColorScheme
         >
           <div vaul-drawer-wrapper="">
-            <div className="bg-background relative flex min-h-svh flex-col">
+            <div className="relative flex min-h-svh flex-col bg-background">
               <TRPCReactProvider>{children}</TRPCReactProvider>
             </div>
           </div>
