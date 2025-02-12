@@ -111,41 +111,45 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  */
 export const publicProcedure = t.procedure.use(timingMiddleware);
 
-export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-  if (!ctx.session) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "You must be logged in to access this procedure.",
-    });
-  }
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(async ({ ctx, next }) => {
+    if (!ctx.session) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to access this procedure.",
+      });
+    }
 
-  return next({
-    ctx: {
-      session: ctx.session,
-      user: ctx.session.user,
-    },
+    return next({
+      ctx: {
+        session: ctx.session,
+        user: ctx.session.user,
+      },
+    });
   });
-});
 
-export const adminProcedure = t.procedure.use(async ({ ctx, next }) => {
-  if (!ctx.session) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "You must be logged in to access this procedure.",
+export const adminProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(async ({ ctx, next }) => {
+    if (!ctx.session) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to access this procedure.",
+      });
+    }
+
+    if (ctx.session.user.role !== "admin") {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "You must be an admin to access this procedure.",
+      });
+    }
+
+    return next({
+      ctx: {
+        session: ctx.session,
+        user: ctx.session.user,
+      },
     });
-  }
-
-  if (ctx.session.user.role !== "admin") {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "You must be an admin to access this procedure.",
-    });
-  }
-
-  return next({
-    ctx: {
-      session: ctx.session,
-      user: ctx.session.user,
-    },
   });
-});

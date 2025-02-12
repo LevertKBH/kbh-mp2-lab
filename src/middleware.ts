@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  if (!session && request.nextUrl.pathname === "/dashboard") {
+  if (!session && request.nextUrl.pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -33,7 +33,7 @@ export async function middleware(request: NextRequest) {
 
   if (
     session &&
-    request.nextUrl.pathname === "/dashboard/users" &&
+    request.nextUrl.pathname.startsWith("/dashboard/users") &&
     session.user.role !== "admin"
   ) {
     return NextResponse.redirect(new URL("/dashboard/entries", request.url));
@@ -41,7 +41,7 @@ export async function middleware(request: NextRequest) {
 
   if (
     session &&
-    request.nextUrl.pathname === "/dashboard/audit" &&
+    request.nextUrl.pathname.startsWith("/dashboard/audit") &&
     session.user.role !== "admin"
   ) {
     return NextResponse.redirect(new URL("/dashboard/entries", request.url));

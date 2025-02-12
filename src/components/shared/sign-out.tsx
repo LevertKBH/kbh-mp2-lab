@@ -12,8 +12,9 @@ export function SignOut() {
   };
   return (
     <form action={handleSignOut}>
-      <Button variant="ghost" className="h-8 w-8 px-0" type="submit">
-        <LogOutIcon />
+      <Button variant="outline" size="sm" type="submit">
+        <LogOutIcon className="mr-1 h-4 w-4" />
+        Sign out
       </Button>
     </form>
   );

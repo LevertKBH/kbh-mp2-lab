@@ -43,6 +43,7 @@ export function LoginForm({
       });
 
       if (thing.error) {
+        console.log("ERROR", thing);
         toast.error(thing.error.message);
 
         return;

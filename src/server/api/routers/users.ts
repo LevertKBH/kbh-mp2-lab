@@ -1,10 +1,18 @@
 import { auth } from "@/lib/auth";
-import { adminProcedure, createTRPCRouter } from "@/server/api/trpc";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "@/server/api/trpc";
 import { betterAuthCreateUserSchema } from "@/types/user-model";
+import { TRPCError } from "@trpc/server";
 import { headers } from "next/headers";
 import { z } from "zod";
 
 export const usersRouter = createTRPCRouter({
+  getCurrentUser: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.user;
+  }),
   getAllUsers: adminProcedure.query(async ({}) => {
     const users = await auth.api.listUsers({
       headers: await headers(),
@@ -15,6 +23,32 @@ export const usersRouter = createTRPCRouter({
 
     return users;
   }),
+  updatePassword: protectedProcedure
+    .input(
+      z.object({
+        newPassword: z.string(),
+        currentPassword: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { newPassword, currentPassword } = input;
+
+      try {
+        await auth.api.changePassword({
+          headers: await headers(),
+          body: {
+            currentPassword,
+            newPassword,
+            revokeOtherSessions: true,
+          },
+        });
+      } catch (error) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "An unexpected error occurred while updating the password",
+        });
+      }
+    }),
   updateRole: adminProcedure
     .input(
       z.object({
@@ -25,7 +59,10 @@ export const usersRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { userId, role } = input;
       if (ctx.user.id === userId) {
-        throw new Error("You cannot update your own role");
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You cannot update your own role",
+        });
       }
 
       await auth.api.setRole({
