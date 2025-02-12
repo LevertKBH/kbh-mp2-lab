@@ -13,6 +13,13 @@ export const entriesColumns: ColumnDef<PrismaModels["Downtime"]>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
+    enableHiding: false,
+    enableSorting: true,
+    sortingFn: (a, b) => {
+      const aStatus = a.original.end_date ? "up" : "down";
+      const bStatus = b.original.end_date ? "up" : "down";
+      return aStatus.localeCompare(bStatus);
+    },
     cell: ({ row }) => {
       return (
         <Badge
