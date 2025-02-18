@@ -87,6 +87,9 @@ export default function CreateEntryDialog() {
         }
         setIsOpen(open);
       }}
+      onCloseAutoFocus={() => {
+        form.reset();
+      }}
     >
       <Form {...form}>
         <form

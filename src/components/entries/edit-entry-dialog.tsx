@@ -14,14 +14,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
 import { Icons } from "../shared/icons";
+import { ResponsiveModal } from "../shared/responsive-modal";
 import { Button } from "../ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
 import {
   Form,
   FormControl,
@@ -86,205 +80,183 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
   });
 
   return (
-    <Dialog
-      open={open}
+    <ResponsiveModal
+      title="Edit Entry"
+      description="Edit the downtime entry."
+      hasTrigger={false}
+      isOpen={open}
       onOpenChange={(open) => {
         if (!open) {
           form.reset();
         }
         onOpenChange(open);
       }}
+      onCloseAutoFocus={() => {
+        form.reset();
+      }}
     >
-      <DialogContent>
-        <div className="flex flex-col items-center gap-2">
-          <div
-            className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border"
-            aria-hidden="true"
-          >
-            <svg
-              className="stroke-zinc-800 dark:stroke-zinc-100"
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 32 32"
-              aria-hidden="true"
-            >
-              <circle cx="16" cy="16" r="12" fill="none" strokeWidth="8" />
-            </svg>
-          </div>
-          <DialogHeader>
-            <DialogTitle className="sm:text-center">Edit Entry</DialogTitle>
-            <DialogDescription className="sm:text-center">
-              Edit the downtime entry.
-            </DialogDescription>
-          </DialogHeader>
-        </div>
-
-        <Form {...form}>
-          <form
-            className="space-y-5"
-            onSubmit={form.handleSubmit(() =>
-              updateEntry.mutate({ id: entry.id, ...form.getValues() }),
-            )}
-          >
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="start_date"
-                render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel htmlFor={`${id}-startDate`}>
-                      Start Date
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        id={`${id}-startDate`}
-                        max="9999-12-31T23:59"
-                        type="datetime-local"
-                        required
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="end_date"
-                render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel htmlFor={`${id}-endDate`}>End Date</FormLabel>
-                    <FormControl>
-                      <Input
-                        id={`${id}-endDate`}
-                        max="9999-12-31T23:59"
-                        disabled={!form.getValues("start_date")}
-                        min={form.getValues("start_date")}
-                        type="datetime-local"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Adding an end date will set the status to &quot;up&quot;
-                      and resolve the downtime.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="plant_category"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col space-y-2">
-                    <FormLabel>Plant Category</FormLabel>
-                    <FormCombobox
-                      field={field}
-                      onSelect={field.onChange}
-                      options={plantCategoryValues}
+      <Form {...form}>
+        <form
+          className="space-y-5"
+          onSubmit={form.handleSubmit(() =>
+            updateEntry.mutate({ id: entry.id, ...form.getValues() }),
+          )}
+        >
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="start_date"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel htmlFor={`${id}-startDate`}>Start Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      id={`${id}-startDate`}
+                      max="9999-12-31T23:59"
+                      type="datetime-local"
+                      required
+                      {...field}
                     />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="plant_section"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col space-y-2">
-                    <FormLabel>Plant Section</FormLabel>
-                    <FormCombobox
-                      field={field}
-                      onSelect={field.onChange}
-                      options={plantSectionValues}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="discipline"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col space-y-2">
-                    <FormLabel>Discipline</FormLabel>
-                    <FormCombobox
-                      field={field}
-                      onSelect={field.onChange}
-                      options={disciplineValues}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="plant_equipment"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col space-y-2">
-                    <FormLabel>Plant Equipment</FormLabel>
-                    <FormCombobox
-                      field={field}
-                      onSelect={(value) => {
-                        setSelectedPlantEquipment(undefined);
-                        form.setValue("breakdown_description", "");
-
-                        const selectedOption = plantEquipmentDescription.find(
-                          (option) => option.value === value,
-                        );
-
-                        setSelectedPlantEquipment(selectedOption);
-                        field.onChange(value);
-                      }}
-                      options={plantEquipmentDescription}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="breakdown_description"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col space-y-2">
-                    <FormLabel>Breakdown Description</FormLabel>
-                    <FormCombobox
-                      field={field}
-                      onSelect={field.onChange}
-                      disabled={!form.getValues("plant_equipment")}
-                      options={
-                        selectedPlantEquipment
-                          ? (selectedPlantEquipment?.options?.map((option) => ({
-                              label: option,
-                              value: option,
-                            })) as BasicKeyValue[])
-                          : []
-                      }
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={updateEntry.isPending}
-            >
-              {updateEntry.isPending && (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-              Update Entry
-            </Button>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+            />
+            <FormField
+              control={form.control}
+              name="end_date"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel htmlFor={`${id}-endDate`}>End Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      id={`${id}-endDate`}
+                      max="9999-12-31T23:59"
+                      disabled={!form.getValues("start_date")}
+                      min={form.getValues("start_date")}
+                      type="datetime-local"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Adding an end date will set the status to &quot;up&quot; and
+                    resolve the downtime.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="plant_category"
+              render={({ field }) => (
+                <FormItem className="flex flex-col space-y-2">
+                  <FormLabel>Plant Category</FormLabel>
+                  <FormCombobox
+                    field={field}
+                    onSelect={field.onChange}
+                    options={plantCategoryValues}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="plant_section"
+              render={({ field }) => (
+                <FormItem className="flex flex-col space-y-2">
+                  <FormLabel>Plant Section</FormLabel>
+                  <FormCombobox
+                    field={field}
+                    onSelect={field.onChange}
+                    options={plantSectionValues}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="discipline"
+              render={({ field }) => (
+                <FormItem className="flex flex-col space-y-2">
+                  <FormLabel>Discipline</FormLabel>
+                  <FormCombobox
+                    field={field}
+                    onSelect={field.onChange}
+                    options={disciplineValues}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="plant_equipment"
+              render={({ field }) => (
+                <FormItem className="flex flex-col space-y-2">
+                  <FormLabel>Plant Equipment</FormLabel>
+                  <FormCombobox
+                    field={field}
+                    onSelect={(value) => {
+                      setSelectedPlantEquipment(undefined);
+                      form.setValue("breakdown_description", "");
+
+                      const selectedOption = plantEquipmentDescription.find(
+                        (option) => option.value === value,
+                      );
+
+                      setSelectedPlantEquipment(selectedOption);
+                      field.onChange(value);
+                    }}
+                    options={plantEquipmentDescription}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="breakdown_description"
+              render={({ field }) => (
+                <FormItem className="flex flex-col space-y-2">
+                  <FormLabel>Breakdown Description</FormLabel>
+                  <FormCombobox
+                    field={field}
+                    onSelect={field.onChange}
+                    disabled={!form.getValues("plant_equipment")}
+                    options={
+                      selectedPlantEquipment
+                        ? (selectedPlantEquipment?.options?.map((option) => ({
+                            label: option,
+                            value: option,
+                          })) as BasicKeyValue[])
+                        : []
+                    }
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={updateEntry.isPending}
+          >
+            {updateEntry.isPending && (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            Update Entry
+          </Button>
+        </form>
+      </Form>
+    </ResponsiveModal>
   );
 };
 

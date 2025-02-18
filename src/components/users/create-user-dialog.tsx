@@ -68,6 +68,9 @@ export default function CreateUserDialog() {
         }
         setIsOpen(open);
       }}
+      onCloseAutoFocus={() => {
+        form.reset();
+      }}
       hasTrigger
       trigger={
         <Button variant="outline" size="sm">

@@ -72,6 +72,9 @@ export default function UpdateUserDialog() {
         }
         setOpen(open);
       }}
+      onCloseAutoFocus={() => {
+        form.reset();
+      }}
     >
       <Form {...form}>
         <form

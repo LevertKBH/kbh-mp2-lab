@@ -36,6 +36,7 @@ type ResponsiveModalProps = {
   onOpenChange: (open: boolean) => void;
   title: string;
   description: string;
+  onCloseAutoFocus?: () => void;
 } & (ResponsiveModalWithTrigger | ResponsiveModalWithoutTrigger);
 
 export function ResponsiveModal({
@@ -44,6 +45,7 @@ export function ResponsiveModal({
   onOpenChange,
   title,
   description,
+  onCloseAutoFocus,
   ...props
 }: ResponsiveModalProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -54,7 +56,10 @@ export function ResponsiveModal({
         {props.hasTrigger && (
           <DialogTrigger asChild>{props.trigger}</DialogTrigger>
         )}
-        <DialogContent className="sm:max-w-[475px]">
+        <DialogContent
+          className="sm:max-w-[475px]"
+          onCloseAutoFocus={onCloseAutoFocus}
+        >
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
@@ -70,7 +75,7 @@ export function ResponsiveModal({
       {props.hasTrigger && (
         <DrawerTrigger asChild>{props.trigger}</DrawerTrigger>
       )}
-      <DrawerContent className="px-5">
+      <DrawerContent className="px-5" onCloseAutoFocus={onCloseAutoFocus}>
         <DrawerHeader className="px-0 text-left">
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>

@@ -2,13 +2,6 @@
 
 import { Icons } from "@/components/shared/icons";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { resolveEntrySchema } from "@/lib/zod/entries";
 import { api } from "@/trpc/react";
@@ -18,6 +11,7 @@ import { useId } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
+import { ResponsiveModal } from "../shared/responsive-modal";
 import {
   Form,
   FormControl,
@@ -68,106 +62,86 @@ export default function ResolveEntryDialog({
   });
 
   return (
-    <Dialog
-      open={open}
+    <ResponsiveModal
+      title="Resolve Entry"
+      description="Resolve a downtime entry."
+      hasTrigger={false}
+      isOpen={open}
       onOpenChange={(open) => {
         if (!open) {
           form.reset();
         }
         onOpenChange(open);
       }}
+      onCloseAutoFocus={() => {
+        form.reset();
+      }}
     >
-      <DialogContent>
-        <div className="flex flex-col items-center gap-2">
-          <div
-            className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border"
-            aria-hidden="true"
-          >
-            <svg
-              className="stroke-zinc-800 dark:stroke-zinc-100"
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 32 32"
-              aria-hidden="true"
-            >
-              <circle cx="16" cy="16" r="12" fill="none" strokeWidth="8" />
-            </svg>
-          </div>
-          <DialogHeader>
-            <DialogTitle className="sm:text-center">Resolve Entry</DialogTitle>
-            <DialogDescription className="sm:text-center">
-              Resolve a downtime entry.
-            </DialogDescription>
-          </DialogHeader>
-        </div>
-
-        <Form {...form}>
-          <form
-            className="space-y-5"
-            onSubmit={form.handleSubmit(() => {
-              resolveEntry.mutate({
-                id: entry.id,
-                ...form.getValues(),
-              });
-            })}
-          >
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="end_date"
-                render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel htmlFor={`${id}-startDate`}>End Date</FormLabel>
-                    <FormControl>
-                      <Input
-                        id={`${id}-startDate`}
-                        max="9999-12-31T23:59"
-                        disabled={!entry.start_date}
-                        min={entry.start_date}
-                        type="datetime-local"
-                        required
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="notes"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col space-y-2">
-                    <FormLabel>Notes</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Enter notes here"
-                        className="resize-none"
-                        required
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={resolveEntry.isPending}
-            >
-              {resolveEntry.isPending && (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+      <Form {...form}>
+        <form
+          className="space-y-5"
+          onSubmit={form.handleSubmit(() => {
+            resolveEntry.mutate({
+              id: entry.id,
+              ...form.getValues(),
+            });
+          })}
+        >
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="end_date"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel htmlFor={`${id}-startDate`}>End Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      id={`${id}-startDate`}
+                      max="9999-12-31T23:59"
+                      disabled={!entry.start_date}
+                      min={entry.start_date}
+                      type="datetime-local"
+                      required
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-              Resolve Entry
-            </Button>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+            />
+
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem className="flex flex-col space-y-2">
+                  <FormLabel>Notes</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Enter notes here"
+                      className="resize-none"
+                      required
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={resolveEntry.isPending}
+          >
+            {resolveEntry.isPending && (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            Resolve Entry
+          </Button>
+        </form>
+      </Form>
+    </ResponsiveModal>
   );
 }

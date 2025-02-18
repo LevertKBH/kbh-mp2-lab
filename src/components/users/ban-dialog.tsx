@@ -70,6 +70,9 @@ const BanUserDialog: FC<BanUserDialogProps> = ({
         }
         onOpenChange(open);
       }}
+      onCloseAutoFocus={() => {
+        form.reset();
+      }}
     >
       <Form {...form}>
         <form
