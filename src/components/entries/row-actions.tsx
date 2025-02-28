@@ -1,6 +1,13 @@
 import { authClient } from "@/lib/auth-client";
 import { type PrismaModels } from "@/types/db-models";
-import { CheckIcon, EditIcon, MoreHorizontal, TrashIcon } from "lucide-react";
+import {
+  CheckIcon,
+  DownloadIcon,
+  EditIcon,
+  MoreHorizontal,
+  TrashIcon,
+} from "lucide-react";
+import Link from "next/link";
 import { type FC, useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -46,6 +53,12 @@ const EntryRowActions: FC<EntryRowActionsProps> = ({ entry }) => {
         {session.data?.user.role === "admin" && (
           <>
             {!entry.end_date && <DropdownMenuSeparator />}
+            <Link href={`/dashboard/entries/${entry.id}/`}>
+              <DropdownMenuItem className="flex items-center justify-between">
+                Generate PDF
+                <DownloadIcon className="h-3 w-3" />
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuItem
               onClick={() => setOpenEdit(true)}
               className="flex items-center justify-between text-destructive"
