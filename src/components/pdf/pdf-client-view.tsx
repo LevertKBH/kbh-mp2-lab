@@ -11,7 +11,6 @@ import {
   View,
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
-import logo from "../../app/other.jpg";
 
 const styles = StyleSheet.create({
   page: {
@@ -126,7 +125,7 @@ export const DowntimeReport = ({ data }: { data: DowntimeReportData }) => {
               Generated on: {format(new Date(), "PPP")}
             </Text>
           </View>
-          <Image src={logo.src} style={{ height: 50, width: 50 }} />
+          <Image src="/logo.jpg" style={{ height: 50, width: 50 }} />
           {/* Try rendering the image */}
           {/* <Image
               src={{
