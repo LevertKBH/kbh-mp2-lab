@@ -53,12 +53,13 @@ const EntryRowActions: FC<EntryRowActionsProps> = ({ entry }) => {
         {session.data?.user.role === "admin" && (
           <>
             {!entry.end_date && <DropdownMenuSeparator />}
-            <Link href={`/dashboard/entries/${entry.id}/`}>
+            <Link href={`/dashboard/pdf/${entry.id}/`}>
               <DropdownMenuItem className="flex items-center justify-between">
-                Generate PDF
+                PDF
                 <DownloadIcon className="h-3 w-3" />
               </DropdownMenuItem>
             </Link>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => setOpenEdit(true)}
               className="flex items-center justify-between text-destructive"

@@ -198,24 +198,4 @@ export const entriesRouter = createTRPCRouter({
 
       return { user: ctx.session.user, downtime, auditLogs };
     }),
-  generatePdf: adminProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { id } = input;
-
-      const downtime = await ctx.db.downtime.findUnique({
-        where: { id },
-        include: {
-          user: true,
-        },
-      });
-
-      const auditLogs = await ctx.db.auditLog.findMany({
-        where: {
-          entity_id: id,
-        },
-      });
-
-      return { user: ctx.session.user, downtime, auditLogs };
-    }),
 });
