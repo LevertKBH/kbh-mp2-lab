@@ -79,5 +79,8 @@
   },
   "ct3aMetadata": {
     "initVersion": "7.38.1"
+  },
+  "overrides": {
+    "sharp": "0.30.4"
   }
 }
