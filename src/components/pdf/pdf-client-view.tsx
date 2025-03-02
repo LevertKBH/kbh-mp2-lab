@@ -11,7 +11,7 @@ import {
   View,
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
-import logo from "../../../public/other.jpg";
+import logo from "../../app/other.jpg";
 
 const styles = StyleSheet.create({
   page: {
