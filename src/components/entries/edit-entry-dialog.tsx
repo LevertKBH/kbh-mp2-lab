@@ -7,9 +7,8 @@ import {
 import { entrySchema } from "@/lib/zod/entries";
 import { api } from "@/trpc/react";
 import { type PrismaModels } from "@/types/db-models";
-import { type BasicKeyValue } from "@/types/generic";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type FC, useId, useState } from "react";
+import { type FC, useId } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
@@ -26,6 +25,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 import { FormCombobox } from "./entry-form-combobox";
 
 interface EditEntryDialogProps {
@@ -40,14 +40,6 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
   onOpenChange,
 }) => {
   const id = useId();
-
-  const [selectedPlantEquipment, setSelectedPlantEquipment] = useState<
-    (typeof plantEquipmentDescription)[number] | undefined
-  >(
-    plantEquipmentDescription.find(
-      (option) => option.value === entry.plant_equipment,
-    ),
-  );
 
   const form = useForm<z.infer<typeof entrySchema>>({
     resolver: zodResolver(entrySchema),
@@ -202,17 +194,7 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
                   <FormLabel>Plant Equipment</FormLabel>
                   <FormCombobox
                     field={field}
-                    onSelect={(value) => {
-                      setSelectedPlantEquipment(undefined);
-                      form.setValue("breakdown_description", "");
-
-                      const selectedOption = plantEquipmentDescription.find(
-                        (option) => option.value === value,
-                      );
-
-                      setSelectedPlantEquipment(selectedOption);
-                      field.onChange(value);
-                    }}
+                    onSelect={field.onChange}
                     options={plantEquipmentDescription}
                   />
                   <FormMessage />
@@ -223,21 +205,18 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
               control={form.control}
               name="breakdown_description"
               render={({ field }) => (
-                <FormItem className="flex flex-col space-y-2">
-                  <FormLabel>Breakdown Description</FormLabel>
-                  <FormCombobox
-                    field={field}
-                    onSelect={field.onChange}
-                    disabled={!form.getValues("plant_equipment")}
-                    options={
-                      selectedPlantEquipment
-                        ? (selectedPlantEquipment?.options?.map((option) => ({
-                            label: option,
-                            value: option,
-                          })) as BasicKeyValue[])
-                        : []
-                    }
-                  />
+                <FormItem className="space-y-2">
+                  <FormLabel htmlFor={`${id}-breakdownDescription`}>
+                    Breakdown Description
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      id={`${id}-breakdownDescription`}
+                      placeholder="Enter breakdown description"
+                      required
+                      {...field}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
