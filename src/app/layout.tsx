@@ -8,6 +8,8 @@ import { ThemeProvider } from "@/providers/providers";
 import { TRPCReactProvider } from "@/trpc/react";
 import localFont from "next/font/local";
 
+//
+
 export const metadata: Metadata = {
   title: "MP2 Downtime",
   description: "MP2 Downtime",
