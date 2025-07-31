@@ -22,7 +22,7 @@ import EditEntryDialog from "./edit-entry-dialog";
 import ResolveEntryDialog from "./resolve-entry-dialog";
 
 interface EntryRowActionsProps {
-  entry: PrismaModels["Downtime"];
+  entry: PrismaModels["LabInspection"];
 }
 
 const EntryRowActions: FC<EntryRowActionsProps> = ({ entry }) => {
@@ -41,7 +41,7 @@ const EntryRowActions: FC<EntryRowActionsProps> = ({ entry }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {!entry.end_date && (
+        {(
           <DropdownMenuItem
             onClick={() => setOpenResolve(true)}
             className="flex items-center justify-between"
@@ -52,7 +52,7 @@ const EntryRowActions: FC<EntryRowActionsProps> = ({ entry }) => {
         )}
         {session.data?.user.role === "admin" && (
           <>
-            {!entry.end_date && <DropdownMenuSeparator />}
+            { <DropdownMenuSeparator />}
             <Link href={`/dashboard/pdf/${entry.id}/`}>
               <DropdownMenuItem className="flex items-center justify-between">
                 PDF
@@ -77,11 +77,6 @@ const EntryRowActions: FC<EntryRowActionsProps> = ({ entry }) => {
           </>
         )}
       </DropdownMenuContent>
-      <ResolveEntryDialog
-        open={openResolve}
-        onOpenChange={setOpenResolve}
-        entry={entry}
-      />
       <ConfirmDeleteDialog open={open} onOpenChange={setOpen} entry={entry} />
       <EditEntryDialog
         entry={entry}

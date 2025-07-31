@@ -16,12 +16,12 @@ export function EntryDataTableToolbar<TData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Filter by plant section..."
+          placeholder="Filter by Sample Description ..."
           value={
-            (table.getColumn("plant_section")?.getFilterValue() as string) ?? ""
+            (table.getColumn("sample_description")?.getFilterValue() as string) ?? ""
           }
           onChange={(event) =>
-            table.getColumn("plant_section")?.setFilterValue(event.target.value)
+            table.getColumn("sample_description")?.setFilterValue(event.target.value)
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />

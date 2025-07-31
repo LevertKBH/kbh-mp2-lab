@@ -34,4 +34,8 @@ export const entity_types = [
     value: "User",
     label: "User",
   },
+  {
+    value: "LabInspection",
+    label: "LabInspection",
+  },
 ];

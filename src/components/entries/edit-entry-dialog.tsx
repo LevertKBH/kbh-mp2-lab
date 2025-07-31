@@ -1,8 +1,5 @@
 import {
-  disciplineValues,
-  plantCategoryValues,
-  plantEquipmentDescription,
-  plantSectionValues,
+  sampleDescriptionValues
 } from "@/constants/entries";
 import { entrySchema } from "@/lib/zod/entries";
 import { api } from "@/trpc/react";
@@ -29,7 +26,7 @@ import { Textarea } from "../ui/textarea";
 import { FormCombobox } from "./entry-form-combobox";
 
 interface EditEntryDialogProps {
-  entry: PrismaModels["Downtime"];
+  entry: PrismaModels["LabInspection"];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -44,14 +41,12 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
   const form = useForm<z.infer<typeof entrySchema>>({
     resolver: zodResolver(entrySchema),
     defaultValues: {
-      plant_category: entry.plant_category,
-      start_date: entry.start_date,
-      end_date: entry.end_date ?? "",
-      plant_section: entry.plant_section,
-      discipline: entry.discipline,
-      plant_equipment: entry.plant_equipment,
-      breakdown_description: entry.breakdown_description,
-      notes: entry.notes ?? "",
+      date: entry.date,
+      sample_description: entry.sample_description,
+      fe_perc: entry.fe_perc,
+      sio_perc: entry.sio_perc ?? "",
+      tio_perc: entry.tio_perc,
+      mgo_perc: entry.mgo_perc,
     },
   });
 
@@ -95,15 +90,15 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
           )}
         >
           <div className="space-y-4">
-            <FormField
+          <FormField
               control={form.control}
-              name="start_date"
+              name="date"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-startDate`}>Start Date</FormLabel>
+                  <FormLabel htmlFor={`${id}-date`}>Date</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-startDate`}
+                      id={`${id}-date`}
                       max="9999-12-31T23:59"
                       type="datetime-local"
                       required
@@ -114,105 +109,35 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
                 </FormItem>
               )}
             />
+
+            <FormField
+                  control={form.control}
+                  name="sample_description"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col space-y-2">
+                      <FormLabel>Sample Description</FormLabel>
+                      <FormCombobox
+                        field={field}
+                        onSelect={field.onChange}
+                        options={sampleDescriptionValues}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
             <FormField
               control={form.control}
-              name="end_date"
+              name="fe_perc"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-endDate`}>End Date</FormLabel>
+                  <FormLabel htmlFor={`${id}-fe_perc`}>%Fe</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-endDate`}
-                      max="9999-12-31T23:59"
-                      disabled={!form.getValues("start_date")}
-                      min={form.getValues("start_date")}
-                      type="datetime-local"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Adding an end date will set the status to &quot;up&quot; and
-                    resolve the downtime.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="plant_category"
-              render={({ field }) => (
-                <FormItem className="flex flex-col space-y-2">
-                  <FormLabel>Plant Category</FormLabel>
-                  <FormCombobox
-                    field={field}
-                    onSelect={field.onChange}
-                    options={plantCategoryValues}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="plant_section"
-              render={({ field }) => (
-                <FormItem className="flex flex-col space-y-2">
-                  <FormLabel>Plant Section</FormLabel>
-                  <FormCombobox
-                    field={field}
-                    onSelect={field.onChange}
-                    options={plantSectionValues}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="discipline"
-              render={({ field }) => (
-                <FormItem className="flex flex-col space-y-2">
-                  <FormLabel>Discipline</FormLabel>
-                  <FormCombobox
-                    field={field}
-                    onSelect={field.onChange}
-                    options={disciplineValues}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="plant_equipment"
-              render={({ field }) => (
-                <FormItem className="flex flex-col space-y-2">
-                  <FormLabel>Plant Equipment</FormLabel>
-                  <FormCombobox
-                    field={field}
-                    onSelect={field.onChange}
-                    options={plantEquipmentDescription}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="breakdown_description"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-breakdownDescription`}>
-                    Breakdown Description
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      id={`${id}-breakdownDescription`}
-                      placeholder="Enter breakdown description"
+                      id={`${id}-fe_perc`}
+                      placeholder="Enter %Fe value"
+                      type="number"
+                      autoComplete="off"
                       required
                       {...field}
                     />
@@ -221,6 +146,70 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="sio_perc"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel htmlFor={`${id}-sio_perc`}>%SiO</FormLabel>
+                  <FormControl>
+                    <Input
+                      id={`${id}-fe_perc`}
+                      placeholder="Enter %SiO value"
+                      type="number"
+                      autoComplete="off"
+                      required
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="tio_perc"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel htmlFor={`${id}-tio_perc`}>%Fe</FormLabel>
+                  <FormControl>
+                    <Input
+                      id={`${id}-fe_perc`}
+                      placeholder="Enter %TiO value"
+                      type="number"
+                      autoComplete="off"
+                      required
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="mgo_perc"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel htmlFor={`${id}-mgo_perc`}>%Fe</FormLabel>
+                  <FormControl>
+                    <Input
+                      id={`${id}-mgo_perc`}
+                      placeholder="Enter %MgO value"
+                      type="number"
+                      autoComplete="off"
+                      required
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
           </div>
 
           <Button

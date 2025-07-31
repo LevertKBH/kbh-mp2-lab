@@ -9,7 +9,7 @@ import { z } from "zod";
 
 export const entriesRouter = createTRPCRouter({
   getAllEntries: protectedProcedure.query(async ({ ctx }) => {
-    const entries = await ctx.db.downtime.findMany({
+    const entries = await ctx.db.labInspection.findMany({
       orderBy: {
         created_at: "desc",
       },
@@ -21,7 +21,7 @@ export const entriesRouter = createTRPCRouter({
     .input(entrySchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const entry = await ctx.db.downtime.create({
+        const entry = await ctx.db.labInspection.create({
           data: {
             ...input,
             userId: ctx.session.user.id,
@@ -31,18 +31,15 @@ export const entriesRouter = createTRPCRouter({
         await ctx.db.auditLog.create({
           data: {
             action: "create",
-            entity_type: "downtime",
+            entity_type: "labinspection",
             entity_id: entry.id,
-            description: `Downtime entry created for ${entry.plant_equipment}`,
+            description: `Downtime entry created for ${entry.sample_description}`,
             metadata: JSON.stringify({
-              start_date: entry.start_date,
-              end_date: entry.end_date,
-              plant_category: entry.plant_category,
-              plant_section: entry.plant_section,
-              discipline: entry.discipline,
-              plant_equipment: entry.plant_equipment,
-              breakdown_description: entry.breakdown_description,
-              notes: entry.notes,
+              sample_description: entry.sample_description,
+              fe_perc: entry.fe_perc,
+              sio_perc: entry.sio_perc,
+              tio_perc: entry.tio_perc,
+              mgo_perc: entry.mgo_perc,
             }),
             performed_by_name: ctx.session.user.name,
             performed_by_identifier: ctx.session.user.email,
@@ -63,32 +60,29 @@ export const entriesRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         const { id } = input;
-        const deletedDowntime = await ctx.db.downtime.delete({
+        const deletedlabInspection = await ctx.db.labInspection.delete({
           where: { id },
         });
 
-        const storedDowntime = await ctx.db.deletedDowntime.create({
+        const storedLabInspection = await ctx.db.deletedLabInspection.create({
           data: {
-            ...deletedDowntime,
+            ...deletedlabInspection,
             userId: ctx.session.user.id,
           },
         });
-
+        
         await ctx.db.auditLog.create({
           data: {
             action: "delete",
-            entity_type: "downtime",
+            entity_type: "labinspections",
             entity_id: id,
-            description: `Downtime entry deleted for ${storedDowntime.plant_equipment}`,
+            description: `Downtime entry deleted for ${storedLabInspection.sample_description}`,
             metadata: JSON.stringify({
-              start_date: storedDowntime.start_date,
-              end_date: storedDowntime.end_date,
-              breakdown_description: storedDowntime.breakdown_description,
-              notes: storedDowntime.notes,
-              plant_category: storedDowntime.plant_category,
-              plant_section: storedDowntime.plant_section,
-              discipline: storedDowntime.discipline,
-              plant_equipment: storedDowntime.plant_equipment,
+              sample_description: storedLabInspection.sample_description,
+              fe_perc: storedLabInspection.fe_perc,
+              sio_perc: storedLabInspection.sio_perc,
+              tio_perc: storedLabInspection.tio_perc,
+              mgo_perc: storedLabInspection.mgo_perc,
             }),
             performed_by_name: ctx.session.user.name,
             performed_by_identifier: ctx.session.user.email,
@@ -108,17 +102,17 @@ export const entriesRouter = createTRPCRouter({
       try {
         const { id, ...rest } = input;
 
-        const currentDowntime = await ctx.db.downtime.findUnique({
+        const currentDowntime = await ctx.db.labInspection.findUnique({
           where: { id },
         });
 
-        await ctx.db.downtime.update({ where: { id }, data: rest });
+        await ctx.db.labInspection.update({ where: { id }, data: rest });
 
         await ctx.db.auditLog.create({
           data: {
             action: "update",
             entity_type: "downtime",
-            description: `Downtime entry updated for ${currentDowntime?.plant_equipment}`,
+            description: `Downtime entry updated for ${currentDowntime?.sample_description}`,
             entity_id: id!,
             metadata: JSON.stringify({
               old: currentDowntime,

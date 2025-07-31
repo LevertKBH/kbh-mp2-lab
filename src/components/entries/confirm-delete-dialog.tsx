@@ -17,7 +17,7 @@ import {
 interface confirmDeleteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  entry: PrismaModels["Downtime"];
+  entry: PrismaModels["LabInspection"];
 }
 
 const ConfirmDeleteDialog: FC<confirmDeleteDialogProps> = ({

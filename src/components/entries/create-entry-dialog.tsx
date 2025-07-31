@@ -9,6 +9,7 @@ import {
   plantCategoryValues,
   plantEquipmentDescription,
   plantSectionValues,
+  sampleDescriptionValues
 } from "@/constants/entries";
 import { entrySchema } from "@/lib/zod/entries";
 import { api } from "@/trpc/react";
@@ -40,14 +41,12 @@ export default function CreateEntryDialog() {
   const form = useForm<z.infer<typeof entrySchema>>({
     resolver: zodResolver(entrySchema),
     defaultValues: {
-      start_date: "",
-      end_date: "",
-      plant_category: "",
-      plant_section: "",
-      discipline: "",
-      plant_equipment: "",
-      breakdown_description: "",
-      notes: "",
+      date: "",
+      sample_description: "",
+      fe_perc: "",
+      sio_perc: "",
+      tio_perc: "",
+      mgo_perc: ""
     },
   });
 
@@ -71,13 +70,13 @@ export default function CreateEntryDialog() {
 
   return (
     <ResponsiveModal
-      title="Add Downtime Event"
-      description="Create a new downtime entry."
+      title="Add Lab Results"
+      description="Create a new lab result entry."
       hasTrigger
       trigger={
         <Button variant="outline" size="sm">
           <PlusCircle className="mr-1 h-4 w-4" />
-          Add Downtime Event
+          Add Lab Results
         </Button>
       }
       isOpen={isOpen}
@@ -99,10 +98,10 @@ export default function CreateEntryDialog() {
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="start_date"
+              name="date"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-startDate`}>Start Date</FormLabel>
+                  <FormLabel htmlFor={`${id}-startDate`}>Date</FormLabel>
                   <FormControl>
                     <Input
                       id={`${id}-startDate`}
@@ -118,14 +117,14 @@ export default function CreateEntryDialog() {
             />
             <FormField
               control={form.control}
-              name="plant_category"
+              name="sample_description"
               render={({ field }) => (
                 <FormItem className="flex flex-col space-y-2">
-                  <FormLabel>Downtime Category</FormLabel>
+                  <FormLabel>Sample Description</FormLabel>
                   <FormCombobox
                     field={field}
                     onSelect={field.onChange}
-                    options={plantCategoryValues}
+                    options={sampleDescriptionValues}
                   />
                   <FormMessage />
                 </FormItem>
@@ -133,83 +132,86 @@ export default function CreateEntryDialog() {
             />
             <FormField
               control={form.control}
-              name="plant_section"
+              name="fe_perc"
               render={({ field }) => (
-                <FormItem className="flex flex-col space-y-2">
-                  <FormLabel>Plant Section</FormLabel>
-                  <FormCombobox
-                    field={field}
-                    onSelect={field.onChange}
-                    options={plantSectionValues}
-                  />
+                <FormItem className="space-y-2">
+                  <FormLabel htmlFor={`${id}-fe_perc`}>%Fe</FormLabel>
+                  <FormControl>
+                    <Input
+                      id={`${id}-fe_perc`}
+                      placeholder="Enter %Fe value"
+                      type="number"
+                      autoComplete="off"
+                      required
+                      {...field}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
               control={form.control}
-              name="discipline"
+              name="sio_perc"
               render={({ field }) => (
-                <FormItem className="flex flex-col space-y-2">
-                  <FormLabel>Discipline</FormLabel>
-                  <FormCombobox
-                    field={field}
-                    onSelect={field.onChange}
-                    options={disciplineValues}
-                  />
+                <FormItem className="space-y-2">
+                  <FormLabel htmlFor={`${id}-sio_perc`}>%SiO2</FormLabel>
+                  <FormControl>
+                    <Input
+                      id={`${id}-sio_perc`}
+                      placeholder="Enter %SiO2 value"
+                      type="text"
+                      autoComplete="off"
+                      required
+                      {...field}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="plant_equipment"
-              render={({ field }) => (
-                <FormItem className="flex flex-col space-y-2">
-                  <FormLabel>Plant Equipment</FormLabel>
-                  <FormCombobox
-                    field={field}
-                    onSelect={(value) => {
-                      setSelectedPlantEquipment(undefined);
-                      form.setValue("breakdown_description", "");
-
-                      const selectedOption = plantEquipmentDescription.find(
-                        (option) => option.value === value,
-                      );
-
-                      setSelectedPlantEquipment(selectedOption);
-                      field.onChange(value);
-                    }}
-                    options={plantEquipmentDescription}
+          <FormField
+            control={form.control}
+            name="tio_perc"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel htmlFor={`${id}-tio_perc`}>%TiO</FormLabel>
+                <FormControl>
+                  <Input
+                    id={`${id}-tio_perc`}
+                    placeholder="Enter %TiO2 value"
+                    type="text"
+                    autoComplete="off"
+                    required
+                    {...field}
                   />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="breakdown_description"
-              render={({ field }) => (
-                <FormItem className="flex flex-col space-y-2">
-                  <FormLabel>Breakdown Description</FormLabel>
-                  <FormCombobox
-                    field={field}
-                    onSelect={field.onChange}
-                    disabled={!form.getValues("plant_equipment")}
-                    options={
-                      selectedPlantEquipment
-                        ? (selectedPlantEquipment?.options?.map((option) => ({
-                            label: option,
-                            value: option,
-                          })) as BasicKeyValue[])
-                        : []
-                    }
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="mgo_perc"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel htmlFor={`${id}-mgo_perc`}>%Mg</FormLabel>
+                <FormControl>
+                  <Input
+                    id={`${id}-mgo_perc`}
+                    placeholder="Enter %MgO value"
+                    type="text"
+                    autoComplete="off"
+                    required
+                    {...field}
                   />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           </div>
 
           <Button
