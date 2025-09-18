@@ -55,14 +55,14 @@ export default function CreateEntryDialog() {
       cao_perc: "",
       p2o5_perc: "",
       cu_perc: "",
-      screen425µ: "",
-      screen212µ: "",
-      screen150µ: "",
-      screen75µ: "",
-      screen106µ: "",
-      screen53µ: "",
-      screen45µ: "",
-      screen38µ: "",
+      screen425: "",
+      screen212: "",
+      screen150: "",
+      screen75: "",
+      screen106: "",
+      screen53: "",
+      screen45: "",
+      screen38: "",
       pan: "",
       moisture: ""      
     },
@@ -152,15 +152,15 @@ export default function CreateEntryDialog() {
                         p2o5_perc: "",
                         cu_perc: "",
                         p_perc: "",
-                        screen425µ: "",
+                        screen425: "",
                         al2o3_perc: "",
-                        screen212µ: "",
-                        screen150µ: "",
-                        screen75µ: "",
-                        screen106µ: "",
-                        screen53µ: "",
-                        screen45µ: "",
-                        screen38µ: "",
+                        screen212: "",
+                        screen150: "",
+                        screen75: "",
+                        screen106: "",
+                        screen53: "",
+                        screen45: "",
+                        screen38: "",
                         pan: "",
                         moisture: "" 
                         // Add more fields as in your defaultValues
@@ -388,13 +388,13 @@ export default function CreateEntryDialog() {
           {selectedSampleType === "Special Sample" && (
             <FormField
               control={form.control}
-              name="screen425µ"
+              name="screen425"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-screen425µ`}>+425µ</FormLabel>
+                  <FormLabel htmlFor={`${id}-screen425`}>+425µ</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-screen425µ`}
+                      id={`${id}-screen425`}
                       placeholder="Enter +425µ value"
                       type="number"
                       autoComplete="off"
@@ -411,13 +411,13 @@ export default function CreateEntryDialog() {
           {selectedSampleType === "Special Sample" && (
             <FormField
               control={form.control}
-              name="screen212µ"
+              name="screen212"
               render={({ field }) => (
                 <FormItem className="space-y-2">
                   <FormLabel htmlFor={`${id}-screen212µ`}>+212µ</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-screen212µ`}
+                      id={`${id}-screen212`}
                       placeholder="Enter +212µ value"
                       type="number"
                       autoComplete="off"
@@ -434,13 +434,13 @@ export default function CreateEntryDialog() {
           {selectedSampleType === "Special Sample" && (
             <FormField
               control={form.control}
-              name="screen150µ"
+              name="screen150"
               render={({ field }) => (
                 <FormItem className="space-y-2">
                   <FormLabel htmlFor={`${id}-screen150µ`}>+150µ</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-screen150µ`}
+                      id={`${id}-screen150`}
                       placeholder="Enter +150µ value"
                       type="number"
                       autoComplete="off"
@@ -457,13 +457,13 @@ export default function CreateEntryDialog() {
           {selectedSampleType === "Special Sample" && (
             <FormField
               control={form.control}
-              name="screen75µ"
+              name="screen75"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-screen75µ`}>+75µ</FormLabel>
+                  <FormLabel htmlFor={`${id}-screen75`}>+75µ</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-screen75µ`}
+                      id={`${id}-screen75`}
                       placeholder="Enter +75µ value"
                       type="number"
                       autoComplete="off"
@@ -480,13 +480,13 @@ export default function CreateEntryDialog() {
           {selectedSampleType === "Special Sample" && (
             <FormField
               control={form.control}
-              name="screen106µ"
+              name="screen106"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-screen106µ`}>+106µ</FormLabel>
+                  <FormLabel htmlFor={`${id}-screen106`}>+106µ</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-screen106µ`}
+                      id={`${id}-screen106`}
                       placeholder="Enter +106µ value"
                       type="number"
                       autoComplete="off"
@@ -503,13 +503,13 @@ export default function CreateEntryDialog() {
           {selectedSampleType === "Special Sample" && (
             <FormField
               control={form.control}
-              name="screen53µ"
+              name="screen53"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-screen53µ`}>+53µ</FormLabel>
+                  <FormLabel htmlFor={`${id}-screen53`}>+53µ</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-screen53µ`}
+                      id={`${id}-screen53`}
                       placeholder="Enter +53µ value"
                       type="number"
                       autoComplete="off"
@@ -526,13 +526,13 @@ export default function CreateEntryDialog() {
           {selectedSampleType === "Special Sample" && (
             <FormField
               control={form.control}
-              name="screen45µ"
+              name="screen45"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-screen45µ`}>+45µ</FormLabel>
+                  <FormLabel htmlFor={`${id}-screen45`}>+45µ</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-screen45µ`}
+                      id={`${id}-screen45`}
                       placeholder="Enter +45µ value"
                       type="number"
                       autoComplete="off"
@@ -549,13 +549,13 @@ export default function CreateEntryDialog() {
           {selectedSampleType === "Special Sample" && (
             <FormField
               control={form.control}
-              name="screen38µ"
+              name="screen38"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-screen38µ`}>+38µ</FormLabel>
+                  <FormLabel htmlFor={`${id}-screen38`}>+38µ</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-screen38µ`}
+                      id={`${id}-screen38`}
                       placeholder="Enter +38µ value"
                       type="number"
                       autoComplete="off"
