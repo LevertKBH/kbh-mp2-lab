@@ -162,14 +162,14 @@ model LabInspection {
   cao_perc           String
   p2o5_perc          String
   cu_perc            String
-  screen425u         String @map("screen425µ")
-  screen212u         String @map("screen212µ")
-  screen150u         String @map("screen150µ")
-  screen75u          String @map("screen75µ")
-  screen106u         String @map("screen106µ")
-  screen53u          String @map("screen53µ")
-  screen45u          String @map("screen45µ")
-  screen38u          String @map("screen38µ")
+  screen425         String 
+  screen212         String 
+  screen150         String 
+  screen75          String 
+  screen106         String 
+  screen53          String 
+  screen45          String 
+  screen38          String 
   pan                String
   moisture           String
   userId             String

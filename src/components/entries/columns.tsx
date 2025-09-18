@@ -87,49 +87,49 @@ export const entriesColumns: ColumnDef<PrismaModels["LabInspection"]>[] = [
     ),
   },
   {
-    accessorKey: "screen425µ",
+    accessorKey: "screen425",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="+425µ" />
     ),
   },
   {
-    accessorKey: "screen212µ",
+    accessorKey: "screen212",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="+212µ" />
     ),
   },
   {
-    accessorKey: "screen150µ",
+    accessorKey: "screen150",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="+150µ" />
     ),
   },
   {
-    accessorKey: "screen75µ",
+    accessorKey: "screen75",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="+75µ" />
     ),
   },
   {
-    accessorKey: "screen106µ",
+    accessorKey: "screen106",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="+106µ" />
     ),
   },
   {
-    accessorKey: "screen53µ",
+    accessorKey: "screen53",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="+53µ" />
     ),
   },
   {
-    accessorKey: "screen45µ ",
+    accessorKey: "screen45",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="+45µ" />
     ),
   },
   {
-    accessorKey: "screen38µ ",
+    accessorKey: "screen38",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="+38µ" />
     ),
