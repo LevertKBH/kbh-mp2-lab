@@ -9,8 +9,8 @@ import { TRPCReactProvider } from "@/trpc/react";
 import localFont from "next/font/local";
 
 export const metadata: Metadata = {
-  title: "MP2 Downtime",
-  description: "MP2 Downtime",
+  title: "MP2 Lab Results",
+  description: "MP2 Lab Results",
   icons: [{ rel: "icon", url: "/favicon.png" }],
 };
 

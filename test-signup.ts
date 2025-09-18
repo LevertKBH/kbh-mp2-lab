@@ -8,7 +8,7 @@ async function testSignup() {
         },
         body: JSON.stringify({
           email: 'test@example.com',
-          password: 'testpassword!',
+          password: 'Levert@31',
           name: 'Test User'
         })
       });
