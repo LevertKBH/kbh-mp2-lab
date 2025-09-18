@@ -7,7 +7,7 @@ export interface LinksConfig {
 export const linksConfig: LinksConfig = {
   mainNav: [
     {
-      title: "Entries",
+      title: "Lab Results",
       href: "/dashboard/entries",
       requiresAdmin: false,
     },

@@ -24,7 +24,7 @@ export function MainNav({
         <div className="relative mt-2 h-10 w-16">
           <img
             src="/favicon.png"
-            alt="MP2 Downtime"
+            alt="MP2 Lab Results"
             className="h-full w-full"
           />
         </div>

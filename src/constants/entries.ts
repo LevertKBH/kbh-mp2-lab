@@ -15,16 +15,21 @@ export const plantSectionValues: BasicKeyValue[] = [
   },
 ];
 
-export const plantCategoryValues: BasicKeyValue[] = [
-  { label: "Plant Outage", value: "Plant Outage" },
-  { label: "Operational", value: "Operational" },
-];
-
 export const sampleDescriptionValues: BasicKeyValue[] = [
   { label: "Wet Feed - Frm CNV -2", value: "Wet Feed - Frm CNV -2" },
   { label: "Dry Feed Frm CMV - 8", value: "Dry Feed Frm CMV - 8" },
   { label: "Product 1 ( Mags)", value: "Product 1 ( Mags)" },
   { label: "Product 2 (Non- Mags)", value: "Product 2 (Non- Mags)" },
+];
+
+export const sampleTypeValues: BasicKeyValue[] = [
+  { label: "Normal Sample", value: "Normal Sample" },
+  { label: "Special Sample", value: "Special Sample" },
+];
+export const plantValues: BasicKeyValue[] = [
+  { label: "MP2", value: "MP2" },
+  { label: "SAOB", value: "SAOB" },
+  { label: "LIO", value: "LIO" },
 ];
 
 export const disciplineValues: BasicKeyValue[] = [

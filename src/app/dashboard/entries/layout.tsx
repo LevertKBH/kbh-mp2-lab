@@ -15,9 +15,9 @@ export default function MainLayout({
   return (
     <>
       <PageHeader>
-        <PageHeaderHeading>Entries</PageHeaderHeading>
+        <PageHeaderHeading>Lab Results</PageHeaderHeading>
         <PageHeaderDescription>
-          View and manage your entries.
+          View and manage your Lab Results.
         </PageHeaderDescription>
         <PageActions>
           <CreateEntryDialog />

@@ -8,7 +8,19 @@ import { Badge } from "../ui/badge";
 import EntryRowActions from "./row-actions";
 
 export const entriesColumns: ColumnDef<PrismaModels["LabInspection"]>[] = [
-    {
+  {
+    accessorKey: "plant",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Plant" />
+    ),
+  },  
+  {
+    accessorKey: "sample_type",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Sample Type" />
+    ),
+  },  
+  {
     accessorKey: "sample_description",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Sample Description" />
@@ -23,25 +35,115 @@ export const entriesColumns: ColumnDef<PrismaModels["LabInspection"]>[] = [
   {
     accessorKey: "fe_perc",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fe%" />
+      <DataTableColumnHeader column={column} title="% Fe" />
     ),
   },
   {
     accessorKey: "sio_perc",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="SiO%" />
+      <DataTableColumnHeader column={column} title="% SiO2" />
+    ),
+  },
+  {
+    accessorKey: "al2o3_perc",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="% Al2O3" />
+    ),
+  },
+  {
+    accessorKey: "p_perc",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="% P" />
     ),
   },
   {
     accessorKey: "tio_perc",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="TiO%" />
+      <DataTableColumnHeader column={column} title="% TiO2" />
     ),
   },
   {
     accessorKey: "mgo_perc",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Mg%" />
+      <DataTableColumnHeader column={column} title="% MgO" />
+    ),
+  },
+  {
+    accessorKey: "cao_perc",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="% CaO" />
+    ),
+  },
+  {
+    accessorKey: "p2o5_perc",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="% P205" />
+    ),
+  },
+  {
+    accessorKey: "cu_perc",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="% Cu" />
+    ),
+  },
+  {
+    accessorKey: "screen425µ",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="+425µ" />
+    ),
+  },
+  {
+    accessorKey: "screen212µ",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="+212µ" />
+    ),
+  },
+  {
+    accessorKey: "screen150µ",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="+150µ" />
+    ),
+  },
+  {
+    accessorKey: "screen75µ",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="+75µ" />
+    ),
+  },
+  {
+    accessorKey: "screen106µ",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="+106µ" />
+    ),
+  },
+  {
+    accessorKey: "screen53µ",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="+53µ" />
+    ),
+  },
+  {
+    accessorKey: "screen45µ ",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="+45µ" />
+    ),
+  },
+  {
+    accessorKey: "screen38µ ",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="+38µ" />
+    ),
+  },
+  {
+    accessorKey: "pan",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Pan" />
+    ),
+  },
+  {
+    accessorKey: "moisture",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Moisture" />
     ),
   },
   {
