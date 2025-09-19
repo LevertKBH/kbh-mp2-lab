@@ -104,6 +104,7 @@ export const entriesRouter = createTRPCRouter({
           data: {
             ...deletedlabInspection,
             userId: ctx.session.user.id,
+
           },
         });
         
@@ -115,10 +116,27 @@ export const entriesRouter = createTRPCRouter({
             description: `Downtime entry deleted for ${storedLabInspection.sample_description}`,
             metadata: JSON.stringify({
               sample_description: storedLabInspection.sample_description,
+              sample_type: storedLabInspection.sample_type,
+              plant: storedLabInspection.plant,
               fe_perc: storedLabInspection.fe_perc,
               sio_perc: storedLabInspection.sio_perc,
+              al2o3_perc: storedLabInspection.al2o3_perc,
+              p_perc: storedLabInspection.p_perc,
               tio_perc: storedLabInspection.tio_perc,
               mgo_perc: storedLabInspection.mgo_perc,
+              cao_perc: storedLabInspection.cao_perc,
+              p2o5_perc: storedLabInspection.p2o5_perc,
+              cu_perc: storedLabInspection.cu_perc,
+              screen425: storedLabInspection.screen425,
+              screen212: storedLabInspection.screen212,
+              screen150: storedLabInspection.screen150,
+              screen75: storedLabInspection.screen75,
+              screen106: storedLabInspection.screen106,
+              screen53: storedLabInspection.screen53,
+              screen45: storedLabInspection.screen45,
+              screen38: storedLabInspection.screen38,
+              pan: storedLabInspection.pan,
+              moisture: storedLabInspection.moisture
             }),
             performed_by_name: ctx.session.user.name,
             performed_by_identifier: ctx.session.user.email,
