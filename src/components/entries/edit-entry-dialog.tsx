@@ -46,29 +46,29 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
   const form = useForm<z.infer<typeof entrySchema>>({
     resolver: zodResolver(entrySchema),
     defaultValues: {
-      date: "",
-      sample_type: "Normal Sample",
-      plant: "MP2",
-      sample_description: "Wet Feed - Frm CNV -2",
-      fe_perc: "",
-      sio_perc: "",
-      al2o3_perc: "",
-      p_perc: "",
-      tio_perc: "",
-      mgo_perc: "",
-      cao_perc: "",
-      p2o5_perc: "",
-      cu_perc: "",
-      screen425: "",
-      screen212: "",
-      screen150: "",
-      screen75: "",
-      screen106: "",
-      screen53: "",
-      screen45: "",
-      screen38: "",
-      pan: "",
-      moisture: ""      
+      date: entry.date,
+      sample_type: entry.sample_type,
+      plant: entry.plant,
+      sample_description: entry.sample_description,
+      fe_perc: entry.fe_perc,
+      sio_perc: entry.sio_perc,
+      al2o3_perc: entry.al2o3_perc,
+      p_perc: entry.p_perc,
+      tio_perc: entry.tio_perc,
+      mgo_perc: entry.mgo_perc,
+      cao_perc: entry.cao_perc,
+      p2o5_perc: entry.p2o5_perc,
+      cu_perc: entry.cu_perc,
+      screen425: entry.screen425,
+      screen212: entry.screen212,
+      screen150: entry.screen150,
+      screen75: entry.screen75,
+      screen106: entry.screen106,
+      screen53: entry.screen53,
+      screen45: entry.screen45,
+      screen38: entry.screen38,
+      pan: entry.pan,
+      moisture: entry.moisture     
     },
   });
 
@@ -78,7 +78,7 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
       form.reset();
       await utils.entries.invalidate();
       await utils.audit.invalidate();
-      toast.success("Entry updated successfully");
+      toast.success("Lab Results updated successfully");
       onOpenChange(false);
     },
     onError: (error) => {
@@ -120,10 +120,10 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
               name="date"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-startDate`}>Date</FormLabel>
+                  <FormLabel htmlFor={`${id}-date`}>Date</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-startDate`}
+                      id={`${id}-date`}
                       max="9999-12-31T23:59"
                       type="datetime-local" 
                       step="7200"
@@ -622,7 +622,7 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
             {updateEntry.isPending && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Update Entry
+            Update Lab Results
           </Button>
         </form>
       </Form>

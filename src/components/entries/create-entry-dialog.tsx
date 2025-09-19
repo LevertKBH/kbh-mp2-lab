@@ -121,10 +121,10 @@ export default function CreateEntryDialog() {
               name="date"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-startDate`}>Date</FormLabel>
+                  <FormLabel htmlFor={`${id}-date`}>Date</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-startDate`}
+                      id={`${id}-date`}
                       max="9999-12-31T23:59"
                       type="datetime-local" 
                       step="7200"
