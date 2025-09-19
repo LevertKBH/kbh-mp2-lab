@@ -183,12 +183,28 @@ model LabInspection {
 model DeletedLabInspection {
   id                 String    @id @unique @default(cuid())
   date               String
-  sample_description String
   plant              String
+  sample_type        String
+  sample_description String
   fe_perc            String
   sio_perc           String
+  al2o3_perc         String
+  p_perc             String
   tio_perc           String
   mgo_perc           String
+  cao_perc           String
+  p2o5_perc          String
+  cu_perc            String
+  screen425         String 
+  screen212         String 
+  screen150         String 
+  screen75          String 
+  screen106         String 
+  screen53          String 
+  screen45          String 
+  screen38          String 
+  pan                String
+  moisture           String
   userId             String
   user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   created_at         DateTime? @default(now())
