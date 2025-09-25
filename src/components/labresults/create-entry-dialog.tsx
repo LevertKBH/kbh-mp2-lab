@@ -243,7 +243,7 @@ export default function CreateEntryDialog() {
                       // Custom restriction code:
                       {...field}
                       onChange={e => {
-                        let val = e.target.value
+                        const val = e.target.value
                           .replace(/,/g, '')         // Remove all commas
                           .replace(/[^0-9.]/g, '')   // Only keep digits and dots
                           .replace(/(\..*)\./g, '$1'); // Only allow a single "."
@@ -280,7 +280,7 @@ export default function CreateEntryDialog() {
                       // Custom restriction code:
                       {...field}
                       onChange={e => {
-                        let val = e.target.value
+                        const val = e.target.value
                           .replace(/,/g, '')         // Remove all commas
                           .replace(/[^0-9.]/g, '')   // Only keep digits and dots
                           .replace(/(\..*)\./g, '$1'); // Only allow a single "."
@@ -317,7 +317,7 @@ export default function CreateEntryDialog() {
                       // Custom restriction code:
                       {...field}
                       onChange={e => {
-                        let val = e.target.value
+                        const val = e.target.value
                           .replace(/,/g, '')         // Remove all commas
                           .replace(/[^0-9.]/g, '')   // Only keep digits and dots
                           .replace(/(\..*)\./g, '$1'); // Only allow a single "."
@@ -355,7 +355,7 @@ export default function CreateEntryDialog() {
                       // Custom restriction code:
                       {...field}
                       onChange={e => {
-                        let val = e.target.value
+                        const val = e.target.value
                           .replace(/,/g, '')         // Remove all commas
                           .replace(/[^0-9.]/g, '')   // Only keep digits and dots
                           .replace(/(\..*)\./g, '$1'); // Only allow a single "."
@@ -392,7 +392,7 @@ export default function CreateEntryDialog() {
                       // Custom restriction code:
                       {...field}
                       onChange={e => {
-                        let val = e.target.value
+                        const val = e.target.value
                           .replace(/,/g, '')         // Remove all commas
                           .replace(/[^0-9.]/g, '')   // Only keep digits and dots
                           .replace(/(\..*)\./g, '$1'); // Only allow a single "."
@@ -429,7 +429,7 @@ export default function CreateEntryDialog() {
                       // Custom restriction code:
                       {...field}
                       onChange={e => {
-                        let val = e.target.value
+                        const val = e.target.value
                           .replace(/,/g, '')         // Remove all commas
                           .replace(/[^0-9.]/g, '')   // Only keep digits and dots
                           .replace(/(\..*)\./g, '$1'); // Only allow a single "."
@@ -466,7 +466,7 @@ export default function CreateEntryDialog() {
                       // Custom restriction code:
                       {...field}
                       onChange={e => {
-                        let val = e.target.value
+                        const val = e.target.value
                           .replace(/,/g, '')         // Remove all commas
                           .replace(/[^0-9.]/g, '')   // Only keep digits and dots
                           .replace(/(\..*)\./g, '$1'); // Only allow a single "."
@@ -503,7 +503,7 @@ export default function CreateEntryDialog() {
                       // Custom restriction code:
                       {...field}
                       onChange={e => {
-                        let val = e.target.value
+                        const val = e.target.value
                           .replace(/,/g, '')         // Remove all commas
                           .replace(/[^0-9.]/g, '')   // Only keep digits and dots
                           .replace(/(\..*)\./g, '$1'); // Only allow a single "."
@@ -540,7 +540,7 @@ export default function CreateEntryDialog() {
                       // Custom restriction code:
                       {...field}
                       onChange={e => {
-                        let val = e.target.value
+                        const val = e.target.value
                           .replace(/,/g, '')         // Remove all commas
                           .replace(/[^0-9.]/g, '')   // Only keep digits and dots
                           .replace(/(\..*)\./g, '$1'); // Only allow a single "."
@@ -784,7 +784,7 @@ export default function CreateEntryDialog() {
                         // Custom restriction code:
                         {...field}
                         onChange={e => {
-                          let val = e.target.value
+                          const val = e.target.value
                             .replace(/,/g, '')         // Remove all commas
                             .replace(/[^0-9.]/g, '')   // Only keep digits and dots
                             .replace(/(\..*)\./g, '$1'); // Only allow a single "."
