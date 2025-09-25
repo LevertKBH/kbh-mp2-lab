@@ -1,6 +1,6 @@
 "use client";
 
-import { FormCombobox } from "@/components/entries/entry-form-combobox";
+import { FormCombobox } from "@/components/labresults/entry-form-combobox";
 import { Icons } from "@/components/shared/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,9 +10,10 @@ import {
   plantSectionValues,
   sampleDescriptionValues,
   sampleTypeValues,
-  plantValues
+  plantValues,
+  validateHourValues
 } from "@/constants/entries";
-import { entrySchema } from "@/lib/zod/entries";
+import { entrySchema } from "@/lib/zod/labresults";
 import { api } from "@/trpc/react";
 import { type BasicKeyValue } from "@/types/generic";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,10 +43,11 @@ export default function CreateEntryDialog() {
   const form = useForm<z.infer<typeof entrySchema>>({
     resolver: zodResolver(entrySchema),
     defaultValues: {
-      date: "",
+      date: new Date().toISOString().slice(0, 10), // 'YYYY-MM-DD'
+      hour: "06h00",
       sample_type: "Normal Sample",
       plant: "MP2",
-      sample_description: "Wet Feed - Frm CNV -2",
+      sample_description: "Plant Feed - Frm CNV -2",
       fe_perc: "",
       sio_perc: "",
       al2o3_perc: "",
@@ -116,27 +118,8 @@ export default function CreateEntryDialog() {
           onSubmit={form.handleSubmit((data) => createEntry.mutate(data))}
         >
           <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-date`}>Date</FormLabel>
-                  <FormControl>
-                    <Input
-                      id={`${id}-date`}
-                      max="9999-12-31T23:59"
-                      type="datetime-local" 
-                      step="7200"
-                      required
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
+
+          <FormField
               control={form.control}
               name="plant"
               render={({ field }) => (
@@ -172,6 +155,43 @@ export default function CreateEntryDialog() {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel htmlFor={`${id}-date`}>Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      id={`${id}-date`}
+                      type="date"
+                      required
+                      value={field.value || new Date().toISOString().slice(0, 10)}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="hour"
+              render={({ field }) => (
+                <FormItem className="flex flex-col space-y-2">
+                  <FormLabel>Hour</FormLabel>
+                  <FormCombobox
+                    field={field}
+                    onSelect={field.onChange}
+                    options={validateHourValues}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="sample_type"
@@ -187,6 +207,7 @@ export default function CreateEntryDialog() {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="sample_description"
@@ -202,6 +223,7 @@ export default function CreateEntryDialog() {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="fe_perc"
@@ -211,17 +233,34 @@ export default function CreateEntryDialog() {
                   <FormControl>
                     <Input
                       id={`${id}-fe_perc`}
-                      placeholder="Enter % Fe value"
-                      type="number"
+                      placeholder="Enter %Fe value"
+                      type="text" // Use "text" to get complete control
                       autoComplete="off"
                       required
+                      inputMode="decimal"
+                      pattern="^\d{1,2}(\.\d{1,2})?$"
+                      maxLength={6} // e.g. "99.99"
+                      // Custom restriction code:
                       {...field}
+                      onChange={e => {
+                        const val = e.target.value
+                          .replace(/,/g, '')         // Remove all commas
+                          .replace(/[^0-9.]/g, '')   // Only keep digits and dots
+                          .replace(/(\..*)\./g, '$1'); // Only allow a single "."
+                        // Restrict to the format NN.NN:
+                        // - only one dot
+                        // - at most two digits before and after decimal
+                        if (/^\d{0,2}(\.\d{0,2})?$/.test(val) || val === "") {
+                          field.onChange(val);
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="sio_perc"
@@ -229,19 +268,36 @@ export default function CreateEntryDialog() {
                 <FormItem className="space-y-2">
                   <FormLabel htmlFor={`${id}-sio_perc`}>% SiO<sub>2</sub></FormLabel>
                   <FormControl>
-                    <Input
+                  <Input
                       id={`${id}-sio_perc`}
                       placeholder="Enter %SiO2 value"
-                      type="text"
+                      type="text" // Use "text" to get complete control
                       autoComplete="off"
                       required
+                      inputMode="decimal"
+                      pattern="^\d{1,2}(\.\d{1,2})?$"
+                      maxLength={6} // e.g. "99.99"
+                      // Custom restriction code:
                       {...field}
+                      onChange={e => {
+                        const val = e.target.value
+                          .replace(/,/g, '')         // Remove all commas
+                          .replace(/[^0-9.]/g, '')   // Only keep digits and dots
+                          .replace(/(\..*)\./g, '$1'); // Only allow a single "."
+                        // Restrict to the format NN.NN:
+                        // - only one dot
+                        // - at most two digits before and after decimal
+                        if (/^\d{0,2}(\.\d{0,2})?$/.test(val) || val === "") {
+                          field.onChange(val);
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             {selectedPlant === "LIO" && (<FormField
               control={form.control}
               name="al2o3_perc"
@@ -249,13 +305,29 @@ export default function CreateEntryDialog() {
                 <FormItem className="space-y-2">
                   <FormLabel htmlFor={`${id}-al2o3_perc`}>% Al2O3</FormLabel>
                   <FormControl>
-                    <Input
+                  <Input
                       id={`${id}-al2o3_perc`}
                       placeholder="Enter %Al2O3 value"
-                      type="text"
+                      type="text" // Use "text" to get complete control
                       autoComplete="off"
                       required
+                      inputMode="decimal"
+                      pattern="^\d{1,2}(\.\d{1,2})?$"
+                      maxLength={6} // e.g. "99.99"
+                      // Custom restriction code:
                       {...field}
+                      onChange={e => {
+                        const val = e.target.value
+                          .replace(/,/g, '')         // Remove all commas
+                          .replace(/[^0-9.]/g, '')   // Only keep digits and dots
+                          .replace(/(\..*)\./g, '$1'); // Only allow a single "."
+                        // Restrict to the format NN.NN:
+                        // - only one dot
+                        // - at most two digits before and after decimal
+                        if (/^\d{0,2}(\.\d{0,2})?$/.test(val) || val === "") {
+                          field.onChange(val);
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -263,6 +335,7 @@ export default function CreateEntryDialog() {
               )}
             />)
             }
+
             {(selectedPlant === "SAOB" || selectedPlant === "LIO" ) && (<FormField
               control={form.control}
               name="p_perc"
@@ -270,19 +343,36 @@ export default function CreateEntryDialog() {
                 <FormItem className="space-y-2">
                   <FormLabel htmlFor={`${id}-p_perc`}>% P</FormLabel>
                   <FormControl>
-                    <Input
+                  <Input
                       id={`${id}-p_perc`}
                       placeholder="Enter %P value"
-                      type="text"
+                      type="text" // Use "text" to get complete control
                       autoComplete="off"
                       required
+                      inputMode="decimal"
+                      pattern="^\d{1,2}(\.\d{1,2})?$"
+                      maxLength={6} // e.g. "99.99"
+                      // Custom restriction code:
                       {...field}
+                      onChange={e => {
+                        const val = e.target.value
+                          .replace(/,/g, '')         // Remove all commas
+                          .replace(/[^0-9.]/g, '')   // Only keep digits and dots
+                          .replace(/(\..*)\./g, '$1'); // Only allow a single "."
+                        // Restrict to the format NN.NN:
+                        // - only one dot
+                        // - at most two digits before and after decimal
+                        if (/^\d{0,2}(\.\d{0,2})?$/.test(val) || val === "") {
+                          field.onChange(val);
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />)}
+
           <FormField
             control={form.control}
             name="tio_perc"
@@ -290,19 +380,36 @@ export default function CreateEntryDialog() {
               <FormItem className="space-y-2">
                 <FormLabel htmlFor={`${id}-tio_perc`}>% TiO<sub>2</sub></FormLabel>
                 <FormControl>
-                  <Input
-                    id={`${id}-tio_perc`}
-                    placeholder="Enter %TiO2 value"
-                    type="text"
-                    autoComplete="off"
-                    required
-                    {...field}
-                  />
+                <Input
+                      id={`${id}-tio_perc`}
+                      placeholder="Enter %TiO2 value"
+                      type="text" // Use "text" to get complete control
+                      autoComplete="off"
+                      required
+                      inputMode="decimal"
+                      pattern="^\d{1,2}(\.\d{1,2})?$"
+                      maxLength={6} // e.g. "99.99"
+                      // Custom restriction code:
+                      {...field}
+                      onChange={e => {
+                        const val = e.target.value
+                          .replace(/,/g, '')         // Remove all commas
+                          .replace(/[^0-9.]/g, '')   // Only keep digits and dots
+                          .replace(/(\..*)\./g, '$1'); // Only allow a single "."
+                        // Restrict to the format NN.NN:
+                        // - only one dot
+                        // - at most two digits before and after decimal
+                        if (/^\d{0,2}(\.\d{0,2})?$/.test(val) || val === "") {
+                          field.onChange(val);
+                        }
+                      }}
+                />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="mgo_perc"
@@ -310,19 +417,36 @@ export default function CreateEntryDialog() {
               <FormItem className="space-y-2">
                 <FormLabel htmlFor={`${id}-mgo_perc`}>% MgO</FormLabel>
                 <FormControl>
-                  <Input
-                    id={`${id}-mgo_perc`}
-                    placeholder="Enter %MgO value"
-                    type="text"
-                    autoComplete="off"
-                    required
-                    {...field}
-                  />
+                <Input
+                      id={`${id}-mgo_perc`}
+                      placeholder="Enter %MgO value"
+                      type="text" // Use "text" to get complete control
+                      autoComplete="off"
+                      required
+                      inputMode="decimal"
+                      pattern="^\d{1,2}(\.\d{1,2})?$"
+                      maxLength={6} // e.g. "99.99"
+                      // Custom restriction code:
+                      {...field}
+                      onChange={e => {
+                        const val = e.target.value
+                          .replace(/,/g, '')         // Remove all commas
+                          .replace(/[^0-9.]/g, '')   // Only keep digits and dots
+                          .replace(/(\..*)\./g, '$1'); // Only allow a single "."
+                        // Restrict to the format NN.NN:
+                        // - only one dot
+                        // - at most two digits before and after decimal
+                        if (/^\d{0,2}(\.\d{0,2})?$/.test(val) || val === "") {
+                          field.onChange(val);
+                        }
+                      }}
+                />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="cao_perc"
@@ -330,19 +454,36 @@ export default function CreateEntryDialog() {
               <FormItem className="space-y-2">
                 <FormLabel htmlFor={`${id}-cao_perc`}>% CaO</FormLabel>
                 <FormControl>
-                  <Input
-                    id={`${id}-cao_perc`}
-                    placeholder="Enter % CaO value"
-                    type="number"
-                    autoComplete="off"
-                    required
-                    {...field}
-                  />
+                <Input
+                      id={`${id}-cao_perc`}
+                      placeholder="Enter %CaO value"
+                      type="text" // Use "text" to get complete control
+                      autoComplete="off"
+                      required
+                      inputMode="decimal"
+                      pattern="^\d{1,2}(\.\d{1,2})?$"
+                      maxLength={6} // e.g. "99.99"
+                      // Custom restriction code:
+                      {...field}
+                      onChange={e => {
+                        const val = e.target.value
+                          .replace(/,/g, '')         // Remove all commas
+                          .replace(/[^0-9.]/g, '')   // Only keep digits and dots
+                          .replace(/(\..*)\./g, '$1'); // Only allow a single "."
+                        // Restrict to the format NN.NN:
+                        // - only one dot
+                        // - at most two digits before and after decimal
+                        if (/^\d{0,2}(\.\d{0,2})?$/.test(val) || val === "") {
+                          field.onChange(val);
+                        }
+                      }}
+                />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           {selectedPlant === "MP2" && (<FormField
             control={form.control}
             name="p2o5_perc"
@@ -350,14 +491,30 @@ export default function CreateEntryDialog() {
               <FormItem className="space-y-2">
                 <FormLabel htmlFor={`${id}-p2o5_perc`}>% P2O5</FormLabel>
                 <FormControl>
-                  <Input
-                    id={`${id}-p2o5_perc`}
-                    placeholder="Enter % P2O5 value"
-                    type="number"
-                    autoComplete="off"
-                    required
-                    {...field}
-                  />
+                <Input
+                      id={`${id}-p2o5_perc`}
+                      placeholder="Enter %P2O5 value"
+                      type="text" // Use "text" to get complete control
+                      autoComplete="off"
+                      required
+                      inputMode="decimal"
+                      pattern="^\d{1,2}(\.\d{1,2})?$"
+                      maxLength={6} // e.g. "99.99"
+                      // Custom restriction code:
+                      {...field}
+                      onChange={e => {
+                        const val = e.target.value
+                          .replace(/,/g, '')         // Remove all commas
+                          .replace(/[^0-9.]/g, '')   // Only keep digits and dots
+                          .replace(/(\..*)\./g, '$1'); // Only allow a single "."
+                        // Restrict to the format NN.NN:
+                        // - only one dot
+                        // - at most two digits before and after decimal
+                        if (/^\d{0,2}(\.\d{0,2})?$/.test(val) || val === "") {
+                          field.onChange(val);
+                        }
+                      }}
+                />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -371,14 +528,30 @@ export default function CreateEntryDialog() {
               <FormItem className="space-y-2">
                 <FormLabel htmlFor={`${id}-cu_perc`}>% Cu</FormLabel>
                 <FormControl>
-                  <Input
-                    id={`${id}-cu_perc`}
-                    placeholder="Enter % Cu value"
-                    type="number"
-                    autoComplete="off"
-                    required
-                    {...field}
-                  />
+                <Input
+                      id={`${id}-cu_perc`}
+                      placeholder="Enter %Cu value"
+                      type="text" // Use "text" to get complete control
+                      autoComplete="off"
+                      required
+                      inputMode="decimal"
+                      pattern="^\d{1,2}(\.\d{1,2})?$"
+                      maxLength={6} // e.g. "99.99"
+                      // Custom restriction code:
+                      {...field}
+                      onChange={e => {
+                        const val = e.target.value
+                          .replace(/,/g, '')         // Remove all commas
+                          .replace(/[^0-9.]/g, '')   // Only keep digits and dots
+                          .replace(/(\..*)\./g, '$1'); // Only allow a single "."
+                        // Restrict to the format NN.NN:
+                        // - only one dot
+                        // - at most two digits before and after decimal
+                        if (/^\d{0,2}(\.\d{0,2})?$/.test(val) || val === "") {
+                          field.onChange(val);
+                        }
+                      }}
+                />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -454,17 +627,17 @@ export default function CreateEntryDialog() {
             />
           )}
 
-          {selectedSampleType === "Special Sample" && (
+          {selectedSampleType === "Special Sample" && selectedPlant != "MP2" && (
             <FormField
               control={form.control}
-              name="screen75"
+              name="screen106"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-screen75`}>+75µ</FormLabel>
+                  <FormLabel htmlFor={`${id}-screen106`}>+106µ</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-screen75`}
-                      placeholder="Enter +75µ value"
+                      id={`${id}-screen106`}
+                      placeholder="Enter +106µ value"
                       type="number"
                       autoComplete="off"
                       required
@@ -480,14 +653,14 @@ export default function CreateEntryDialog() {
           {selectedSampleType === "Special Sample" && (
             <FormField
               control={form.control}
-              name="screen106"
+              name="screen75"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-screen106`}>+106µ</FormLabel>
+                  <FormLabel htmlFor={`${id}-screen75`}>+75µ</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-screen106`}
-                      placeholder="Enter +106µ value"
+                      id={`${id}-screen75`}
+                      placeholder="Enter +75µ value"
                       type="number"
                       autoComplete="off"
                       required
@@ -600,20 +773,35 @@ export default function CreateEntryDialog() {
                   <FormLabel htmlFor={`${id}-moisture`}>% Moisture</FormLabel>
                   <FormControl>
                     <Input
-                      id={`${id}-fe_perc`}
-                      placeholder="Enter % Moisture value"
-                      type="number"
-                      autoComplete="off"
-                      required
-                      {...field}
-                    />
+                        id={`${id}-moisture`}
+                        placeholder="Enter %Moisture value"
+                        type="text" // Use "text" to get complete control
+                        autoComplete="off"
+                        required
+                        inputMode="decimal"
+                        pattern="^\d{1,2}(\.\d{1,2})?$"
+                        maxLength={6} // e.g. "99.99"
+                        // Custom restriction code:
+                        {...field}
+                        onChange={e => {
+                          const val = e.target.value
+                            .replace(/,/g, '')         // Remove all commas
+                            .replace(/[^0-9.]/g, '')   // Only keep digits and dots
+                            .replace(/(\..*)\./g, '$1'); // Only allow a single "."
+                          // Restrict to the format NN.NN:
+                          // - only one dot
+                          // - at most two digits before and after decimal
+                          if (/^\d{0,2}(\.\d{0,2})?$/.test(val) || val === "") {
+                            field.onChange(val);
+                          }
+                        }}
+                  />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
-        </div>
+          </div>
 
           <Button
             type="submit"
@@ -623,7 +811,7 @@ export default function CreateEntryDialog() {
             {createEntry.isPending && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Create Entry
+            Add Lab Result
           </Button>
         </form>
       </Form>

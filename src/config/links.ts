@@ -8,7 +8,7 @@ export const linksConfig: LinksConfig = {
   mainNav: [
     {
       title: "Lab Results",
-      href: "/dashboard/entries",
+      href: "/dashboard/labresults",
       requiresAdmin: false,
     },
     {

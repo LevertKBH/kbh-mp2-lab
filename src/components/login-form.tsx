@@ -49,7 +49,7 @@ export function LoginForm({
         return;
       }
 
-      router.replace("/dashboard/entries");
+      router.replace("/dashboard/labresults");
     } catch (error) {
       toast.error("Invalid email or password", {
         description: error as string,

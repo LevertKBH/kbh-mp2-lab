@@ -3,7 +3,7 @@
 import { Icons } from "@/components/shared/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { resolveEntrySchema } from "@/lib/zod/entries";
+import { resolveEntrySchema } from "@/lib/zod/labresults";
 import { api } from "@/trpc/react";
 import { type PrismaModels } from "@/types/db-models";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,7 +54,7 @@ export default function ResolveEntryDialog({
       });
       onOpenChange(false);
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       toast.error("Failed to resolve entry", {
         description: error instanceof Error ? error.message : "Unknown error",
       });

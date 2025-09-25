@@ -150,6 +150,7 @@ model Verification {
 model LabInspection {
   id                 String    @id @unique @default(cuid())
   date               String
+  hour               String
   plant              String
   sample_type        String
   sample_description String
@@ -162,14 +163,14 @@ model LabInspection {
   cao_perc           String
   p2o5_perc          String
   cu_perc            String
-  screen425         String 
-  screen212         String 
-  screen150         String 
-  screen75          String 
-  screen106         String 
-  screen53          String 
-  screen45          String 
-  screen38          String 
+  screen425          String 
+  screen212          String 
+  screen150          String 
+  screen75           String 
+  screen106          String 
+  screen53           String 
+  screen45           String 
+  screen38           String 
   pan                String
   moisture           String
   userId             String
@@ -183,6 +184,7 @@ model LabInspection {
 model DeletedLabInspection {
   id                 String    @id @unique @default(cuid())
   date               String
+  hour               String
   plant              String
   sample_type        String
   sample_description String
@@ -195,14 +197,14 @@ model DeletedLabInspection {
   cao_perc           String
   p2o5_perc          String
   cu_perc            String
-  screen425         String 
-  screen212         String 
-  screen150         String 
-  screen75          String 
-  screen106         String 
-  screen53          String 
-  screen45          String 
-  screen38          String 
+  screen425          String 
+  screen212          String 
+  screen150          String 
+  screen75           String 
+  screen106          String 
+  screen53           String 
+  screen45           String 
+  screen38           String 
   pan                String
   moisture           String
   userId             String

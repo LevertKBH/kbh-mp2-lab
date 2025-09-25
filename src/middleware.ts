@@ -24,11 +24,11 @@ export async function middleware(request: NextRequest) {
   }
 
   if (session && request.nextUrl.pathname === "/login") {
-    return NextResponse.redirect(new URL("/dashboard/entries", request.url));
+    return NextResponse.redirect(new URL("/dashboard/labresults", request.url));
   }
 
   if (session && request.nextUrl.pathname === "/") {
-    return NextResponse.redirect(new URL("/dashboard/entries", request.url));
+    return NextResponse.redirect(new URL("/dashboard/labresults", request.url));
   }
 
   if (
@@ -36,7 +36,7 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/dashboard/users") &&
     session.user.role !== "admin"
   ) {
-    return NextResponse.redirect(new URL("/dashboard/entries", request.url));
+    return NextResponse.redirect(new URL("/dashboard/labresults", request.url));
   }
 
   if (
@@ -44,7 +44,7 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/dashboard/audit") &&
     session.user.role !== "admin"
   ) {
-    return NextResponse.redirect(new URL("/dashboard/entries", request.url));
+    return NextResponse.redirect(new URL("/dashboard/labresults", request.url));
   }
 
   return NextResponse.next();

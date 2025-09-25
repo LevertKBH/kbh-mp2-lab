@@ -1,4 +1,4 @@
-import CreateEntryDialog from "@/components/entries/create-entry-dialog";
+import CreateEntryDialog from "@/components/labresults/create-entry-dialog";
 import PageLayout from "@/components/layout/page-layout";
 import {
   PageActions,

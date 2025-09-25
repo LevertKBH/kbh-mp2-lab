@@ -1,4 +1,4 @@
-import { entrySchema } from "@/lib/zod/entries";
+import { entrySchema } from "@/lib/zod/labresults";
 import {
   adminProcedure,
   createTRPCRouter,
@@ -25,6 +25,7 @@ export const entriesRouter = createTRPCRouter({
           data: {
             ...input,
             userId: ctx.session.user.id,
+            hour: input.hour ?? "0",
             fe_perc: input.fe_perc ?? "0",
             sio_perc: input.sio_perc ?? "0",
             al2o3_perc: input.al2o3_perc ?? "0",
@@ -52,11 +53,12 @@ export const entriesRouter = createTRPCRouter({
             action: "create",
             entity_type: "labinspection",
             entity_id: entry.id,
-            description: `Downtime entry created for ${entry.sample_description}`,
+            description: `Lab Results entry created for ${entry.sample_description}`,
             metadata: JSON.stringify({
               sample_description: entry.sample_description,
               sample_type: entry.sample_type,
               plant: entry.plant,
+              hour: entry.hour,
               fe_perc: entry.fe_perc,
               sio_perc: entry.sio_perc,
               al2o3_perc: entry.al2o3_perc,
@@ -113,8 +115,9 @@ export const entriesRouter = createTRPCRouter({
             action: "delete",
             entity_type: "labinspections",
             entity_id: id,
-            description: `Downtime entry deleted for ${storedLabInspection.sample_description}`,
+            description: `Lab Results deleted for ${storedLabInspection.sample_description}`,
             metadata: JSON.stringify({
+              hour: storedLabInspection.hour,
               sample_description: storedLabInspection.sample_description,
               sample_type: storedLabInspection.sample_type,
               plant: storedLabInspection.plant,
@@ -156,7 +159,7 @@ export const entriesRouter = createTRPCRouter({
       try {
         const { id, ...rest } = input;
 
-        const currentDowntime = await ctx.db.labInspection.findUnique({
+        const currentLabResults = await ctx.db.labInspection.findUnique({
           where: { id },
         });
 
@@ -165,11 +168,11 @@ export const entriesRouter = createTRPCRouter({
         await ctx.db.auditLog.create({
           data: {
             action: "update",
-            entity_type: "downtime",
-            description: `Downtime entry updated for ${currentDowntime?.sample_description}`,
+            entity_type: "labinspections",
+            description: `Lab Results updated for ${currentLabResults?.sample_description}`,
             entity_id: id!,
             metadata: JSON.stringify({
-              old: currentDowntime,
+              old: currentLabResults,
               new: rest,
             }),
             performed_by_name: ctx.session.user.name,
@@ -200,7 +203,7 @@ export const entriesRouter = createTRPCRouter({
           data: { ...rest },
         });
 
-        const currentDowntime = await ctx.db.downtime.findUnique({
+        const currentLabResults = await ctx.db.downtime.findUnique({
           where: { id },
         });
 
@@ -209,9 +212,9 @@ export const entriesRouter = createTRPCRouter({
             action: "resolve",
             entity_type: "downtime",
             entity_id: id,
-            description: `Downtime entry resolved for ${currentDowntime?.plant_equipment}`,
+            description: `Lab Results resolved for ${currentLabResults?.plant_equipment}`,
             metadata: JSON.stringify({
-              old: currentDowntime,
+              old: currentLabResults,
               new: rest,
             }),
             performed_by_name: ctx.session.user.name,

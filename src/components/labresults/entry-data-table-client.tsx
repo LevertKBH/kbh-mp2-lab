@@ -1,6 +1,6 @@
 "use client";
 
-import { entriesColumns } from "@/components/entries/columns";
+import { entriesColumns } from "@/components/labresults/columns";
 import { api } from "@/trpc/react";
 import { DataTable } from "../shared/table/data-table";
 import { EntryDataTableToolbar } from "./entry-table-toolbar";
