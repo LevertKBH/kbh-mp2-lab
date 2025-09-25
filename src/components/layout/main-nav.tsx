@@ -18,7 +18,7 @@ export function MainNav({
   return (
     <div className="mr-4 hidden md:flex">
       <Link
-        href="/dashboard/entries"
+        href="/dashboard/labresults"
         className="mr-4 flex items-center gap-2 lg:mr-6"
       >
         <div className="relative mt-2 h-10 w-16">

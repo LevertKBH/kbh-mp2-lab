@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { type entrySchema } from "@/lib/zod/entries";
+import { type entrySchema } from "@/lib/zod/labresults";
 import { type BasicKeyValue } from "@/types/generic";
 import { useState } from "react";
 import { type ControllerRenderProps } from "react-hook-form";

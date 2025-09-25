@@ -16,10 +16,25 @@ export const plantSectionValues: BasicKeyValue[] = [
 ];
 
 export const sampleDescriptionValues: BasicKeyValue[] = [
-  { label: "Wet Feed - Frm CNV -2", value: "Wet Feed - Frm CNV -2" },
+  { label: "Plant Feed - Frm CNV -2", value: "Plant Feed - Frm CNV -2" },
   { label: "Dry Feed Frm CMV - 8", value: "Dry Feed Frm CMV - 8" },
   { label: "Product 1 ( Mags)", value: "Product 1 ( Mags)" },
   { label: "Product 2 (Non- Mags)", value: "Product 2 (Non- Mags)" },
+];
+
+export const validateHourValues: BasicKeyValue[] = [
+  { label: "06h00", value: "06:00" },
+  { label: "08h00", value: "08:00" },
+  { label: "10h00", value: "10:00" },
+  { label: "12h00", value: "12:00" },
+  { label: "14h00", value: "14:00" },
+  { label: "16h00", value: "16:00" },
+  { label: "18h00", value: "18:00" },
+  { label: "20h00", value: "20:00" },
+  { label: "22h00", value: "22:00" },
+  { label: "00h00", value: "00:00" },
+  { label: "02h00", value: "02:00" },
+  { label: "04h00", value: "04:00" }
 ];
 
 export const sampleTypeValues: BasicKeyValue[] = [
@@ -31,6 +46,7 @@ export const plantValues: BasicKeyValue[] = [
   { label: "SAOB", value: "SAOB" },
   { label: "LIO", value: "LIO" },
 ];
+
 
 export const disciplineValues: BasicKeyValue[] = [
   {

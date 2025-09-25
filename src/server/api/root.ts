@@ -1,6 +1,6 @@
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 import { auditRouter } from "./routers/audit";
-import { entriesRouter } from "./routers/entries";
+import { entriesRouter } from "./routers/labresults";
 import { usersRouter } from "./routers/users";
 
 /**

@@ -41,24 +41,8 @@ const EntryRowActions: FC<EntryRowActionsProps> = ({ entry }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {(
-          <DropdownMenuItem
-            onClick={() => setOpenResolve(true)}
-            className="flex items-center justify-between"
-          >
-            Resolve
-            <CheckIcon />
-          </DropdownMenuItem>
-        )}
         {session.data?.user.role === "admin" && (
           <>
-            { <DropdownMenuSeparator />}
-            <Link href={`/dashboard/pdf/${entry.id}/`}>
-              <DropdownMenuItem className="flex items-center justify-between">
-                PDF
-                <DownloadIcon className="h-3 w-3" />
-              </DropdownMenuItem>
-            </Link>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => setOpenEdit(true)}
