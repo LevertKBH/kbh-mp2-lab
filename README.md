@@ -1,5 +1,7 @@
+***
 RELEASE NOTE:
 Lab Results App – v0.1.5
+- 
 This version of the Lab results Application includes the following changes:
 
 Removal of 106 micron on lab entry form for plant MP2
@@ -11,3 +13,11 @@ Added new Date and Hour elements
 -	Date Picker now also include date(this will now default to the current date in which the lab results are captured)
 -	Hour Picker new component to make it easier for users to select the hour in which the test results are set.
  
+***
+
+RELEASE NOTE:
+Lab Results App – v1.0.0
+- 
+This version of the Lab results Application includes the following changes:
+-	Reconfigure table elements to bring Edit and Delete options closer to initial view
+-	Reconfigure table elements to bring Moisture column closer to initial view   

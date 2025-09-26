@@ -9,6 +9,10 @@ import EntryRowActions from "./row-actions";
 
 export const entriesColumns: ColumnDef<PrismaModels["LabInspection"]>[] = [
   {
+    id: "actions",
+    cell: ({ row }) => <EntryRowActions entry={row.original} />,
+  },
+  {
     accessorKey: "plant",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Plant" />
@@ -93,6 +97,12 @@ export const entriesColumns: ColumnDef<PrismaModels["LabInspection"]>[] = [
     ),
   },
   {
+    accessorKey: "moisture",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Moisture" />
+    ),
+  },
+  {
     accessorKey: "screen425",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="+425µ" />
@@ -146,14 +156,5 @@ export const entriesColumns: ColumnDef<PrismaModels["LabInspection"]>[] = [
       <DataTableColumnHeader column={column} title="Pan" />
     ),
   },
-  {
-    accessorKey: "moisture",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Moisture" />
-    ),
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <EntryRowActions entry={row.original} />,
-  },
+
 ];
