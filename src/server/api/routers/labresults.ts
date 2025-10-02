@@ -163,7 +163,7 @@ export const entriesRouter = createTRPCRouter({
           where: { id },
         });
 
-        await ctx.db.labInspection.update({ where: { id }, data: rest });
+        const updatedEntry = await ctx.db.labInspection.update({ where: { id }, data: rest });
 
         await ctx.db.auditLog.create({
           data: {
@@ -180,6 +180,7 @@ export const entriesRouter = createTRPCRouter({
             userId: ctx.session.user.id,
           },
         });
+return updatedEntry;
       } catch {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
