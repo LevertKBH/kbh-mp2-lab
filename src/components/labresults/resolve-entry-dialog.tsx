@@ -45,14 +45,8 @@ export default function ResolveEntryDialog({
 
   const utils = api.useUtils();
   const resolveEntry = api.entries.resolveEntry.useMutation({
-    onSuccess: async () => {
-      form.reset();
-      await utils.entries.invalidate();
-      await utils.audit.invalidate();
-      toast.success("Entry resolved", {
-        description: "Entry has been resolved successfully",
-      });
-      onOpenChange(false);
+    onSuccess: () => {
+      window.location.reload();
     },
     onError: (error: unknown) => {
       toast.error("Failed to resolve entry", {

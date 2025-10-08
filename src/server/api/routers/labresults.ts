@@ -17,6 +17,30 @@ export const entriesRouter = createTRPCRouter({
 
     return entries;
   }),
+  /**
+   * Fetch entries filtered by date, plant, and hours.
+   */
+  getFilteredEntries: protectedProcedure
+    .input(z.object({
+      startDate: z.string().nullable(),
+      endDate: z.string().nullable(),
+      plant: z.string().nullable(),
+      hours: z.array(z.string()).nullable(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const { startDate, endDate, plant, hours } = input;
+      return await ctx.db.labInspection.findMany({
+        where: {
+          AND: [
+            ...(startDate ? [{ date: { gte: startDate } }] : []),
+            ...(endDate ? [{ date: { lte: endDate } }] : []),
+            ...(plant ? [{ plant }] : []),
+            ...(hours ? [{ hour: { in: hours } }] : []),
+          ],
+        },
+        orderBy: { created_at: "desc" },
+      });
+    }),
   createEntry: protectedProcedure
     .input(entrySchema)
     .mutation(async ({ ctx, input }) => {

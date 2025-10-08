@@ -23,18 +23,18 @@ export const sampleDescriptionValues: BasicKeyValue[] = [
 ];
 
 export const validateHourValues: BasicKeyValue[] = [
-  { label: "06h00", value: "06:00" },
-  { label: "08h00", value: "08:00" },
-  { label: "10h00", value: "10:00" },
-  { label: "12h00", value: "12:00" },
-  { label: "14h00", value: "14:00" },
-  { label: "16h00", value: "16:00" },
-  { label: "18h00", value: "18:00" },
-  { label: "20h00", value: "20:00" },
-  { label: "22h00", value: "22:00" },
-  { label: "00h00", value: "00:00" },
-  { label: "02h00", value: "02:00" },
-  { label: "04h00", value: "04:00" }
+  { label: "06h00", value: "06h00" },
+  { label: "08h00", value: "08h00" },
+  { label: "10h00", value: "10h00" },
+  { label: "12h00", value: "12h00" },
+  { label: "14h00", value: "14h00" },
+  { label: "16h00", value: "16h00" },
+  { label: "18h00", value: "18h00" },
+  { label: "20h00", value: "20h00" },
+  { label: "22h00", value: "22h00" },
+  { label: "00h00", value: "00h00" },
+  { label: "02h00", value: "02h00" },
+  { label: "04h00", value: "04h00" }
 ];
 
 export const sampleTypeValues: BasicKeyValue[] = [

@@ -72,14 +72,8 @@ export default function CreateEntryDialog() {
 
   const utils = api.useUtils();
   const createEntry = api.entries.createEntry.useMutation({
-    onSuccess: async () => {
-      form.reset();
-      await utils.entries.invalidate();
-      await utils.audit.invalidate();
-      setIsOpen(false);
-      toast.success("Entry created", {
-        description: "Entry has been created successfully",
-      });
+    onSuccess: () => {
+      window.location.reload();
     },
     onError: () => {
       toast.error("Failed to create entry", {

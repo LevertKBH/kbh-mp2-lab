@@ -27,11 +27,8 @@ const ConfirmDeleteDialog: FC<confirmDeleteDialogProps> = ({
 }) => {
   const utils = api.useUtils();
   const deleteEntry = api.entries.deleteEntry.useMutation({
-    onSuccess: async () => {
-      await utils.entries.invalidate();
-      await utils.audit.invalidate();
-      toast.success("Entry deleted successfully");
-      onOpenChange(false);
+    onSuccess: () => {
+      window.location.reload();
     },
     onError: (error) => {
       toast.error("Failed to delete entry", {
