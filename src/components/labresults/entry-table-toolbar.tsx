@@ -82,7 +82,7 @@ export function EntryDataTableToolbar<TData>({
     const wbout = XLSX.write(workbook, {
       bookType: "xlsx",
       type: "array",
-    });
+    }) as ArrayBuffer;
     const blob = new Blob([wbout], {
       type: "application/octet-stream",
     });
