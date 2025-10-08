@@ -6,7 +6,11 @@ import { DataTable } from "../shared/table/data-table";
 import { EntryDataTableToolbar } from "./entry-table-toolbar";
 
 export default function EntryDataTableClient() {
-  const [entries] = api.entries.getAllEntries.useSuspenseQuery();
+  const entriesQuery = api.entries.getAllEntries.useQuery(undefined, {
+    suspense: true,
+    refetchOnMount: "always",
+  });
+  const entries = entriesQuery.data ?? [];
 
   return (
     <>

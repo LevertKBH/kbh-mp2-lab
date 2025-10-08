@@ -76,12 +76,8 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
 
   const utils = api.useUtils();
   const updateEntry = api.entries.updateEntry.useMutation({
-    onSuccess: async () => {
-      form.reset();
-      await utils.entries.invalidate();
-      await utils.audit.invalidate();
-      toast.success("Lab Results updated successfully");
-      onOpenChange(false);
+    onSuccess: () => {
+      window.location.reload();
     },
     onError: (error: unknown) => {
       toast.error("Failed to update entry", {
