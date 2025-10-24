@@ -40,6 +40,7 @@ export const validateHourValues: BasicKeyValue[] = [
 export const sampleTypeValues: BasicKeyValue[] = [
   { label: "Normal Sample", value: "Normal Sample" },
   { label: "Special Sample", value: "Special Sample" },
+  { label: "NS - No Sample", value: "NS - No Sample" },
 ];
 export const plantValues: BasicKeyValue[] = [
   { label: "MP2", value: "MP2" },

@@ -124,6 +124,7 @@ export function EntryDataTableToolbar<TData>({
         />
       </div>
       <div className="flex items-center space-x-2">
+
         <Dialog>
           <DialogTrigger asChild>
             <Button

@@ -1,4 +1,5 @@
 import CreateEntryDialog from "@/components/labresults/create-entry-dialog";
+import BatchEntryButton from "@/components/labresults/BatchEntryButton";
 import PageLayout from "@/components/layout/page-layout";
 import {
   PageActions,
@@ -21,6 +22,7 @@ export default function MainLayout({
         </PageHeaderDescription>
         <PageActions>
           <CreateEntryDialog />
+          <BatchEntryButton />
         </PageActions>
       </PageHeader>
       <PageLayout>{children}</PageLayout>

@@ -2,7 +2,7 @@ import { entrySchema } from "@/lib/zod/labresults";
 import { api } from "@/trpc/react";
 import { type PrismaModels } from "@/types/db-models";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type FC, useId } from "react";
+import { type FC, useId, useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
@@ -88,6 +88,45 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
 
 
   const selectedSampleType = form.watch("sample_type");
+  const prevSampleTypeRef = useRef(form.getValues("sample_type"));
+  useEffect(() => {
+    if (
+      selectedSampleType === "NS - No Sample" &&
+      prevSampleTypeRef.current !== "NS - No Sample"
+    ) {
+      if (
+        !confirm(
+          "Switching to ‘NS - No Sample’ will reset all values to 0. Do you want to continue?"
+        )
+      ) {
+        form.setValue("sample_type", prevSampleTypeRef.current);
+      } else {
+        const toZero = [
+          "fe_perc",
+          "sio_perc",
+          "al2o3_perc",
+          "p_perc",
+          "tio_perc",
+          "mgo_perc",
+          "cao_perc",
+          "p2o5_perc",
+          "cu_perc",
+          "moisture",
+          "screen425",
+          "screen212",
+          "screen150",
+          "screen75",
+          "screen106",
+          "screen53",
+          "screen45",
+          "screen38",
+          "pan",
+        ] as const;
+        toZero.forEach((f) => form.setValue(f, "0"));
+        prevSampleTypeRef.current = "NS - No Sample";
+      }
+    }
+  }, [selectedSampleType]);
   const selectedPlant = form.watch("plant");
   return (
     <ResponsiveModal
