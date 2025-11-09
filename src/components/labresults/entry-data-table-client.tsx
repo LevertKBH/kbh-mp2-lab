@@ -1,6 +1,7 @@
 "use client";
 
 import type { PrismaModels } from "@/types/db-models";
+import type { ColumnDef } from "@tanstack/react-table";
 
 import { format, parse } from "date-fns";
 import { useLabFilterStore } from "@/store/labResultsFilter";
@@ -55,12 +56,13 @@ export default function EntryDataTableClient() {
           // compute average row for numeric columns
           const avgRow: Record<string, string | number> = { plant: "Average" };
           const nonNumericKeys = ["actions", "plant", "hour", "sample_type", "sample_description", "date"];
+          // derive numeric columns from accessorKey
           const numericKeys = entriesColumns
-            .map((col) => col.id)
-            .filter(
-              (k): k is string =>
-                typeof k === "string" && !nonNumericKeys.includes(k)
-            );
+            .filter((col): col is ColumnDef<PrismaModels["LabInspection"], any> & { accessorKey: string } =>
+              typeof (col as any).accessorKey === "string"
+            )
+            .map((col) => (col as any).accessorKey)
+            .filter((key) => !nonNumericKeys.includes(key));
           numericKeys.forEach((key) => {
             const values = dayEntries
               .map((item) => {
