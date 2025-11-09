@@ -1,5 +1,7 @@
 "use client";
 
+import type { PrismaModels } from "@/types/db-models";
+
 import { format, parse } from "date-fns";
 import { useLabFilterStore } from "@/store/labResultsFilter";
 import { entriesColumns } from "@/components/labresults/columns";
@@ -21,8 +23,11 @@ export default function EntryDataTableClient() {
     { suspense: true, refetchOnMount: "always" }
   );
 
+  // Ensure correct typing for entries array
+  const typedEntries = entries as PrismaModels["LabInspection"][];
+
   const shiftKeys = Array.from(
-    new Set(entries.map((e) => getShiftKey(e.date, e.hour)))
+    new Set(typedEntries.map((e) => getShiftKey(e.date, e.hour)))
   );
   const shiftDays = shiftKeys.sort((a, b) => {
     const da = parse(a, "d MMMM yyyy", new Date()).getTime();
@@ -42,7 +47,7 @@ export default function EntryDataTableClient() {
     <div>
       <div className="space-y-8">
         {shiftDays.map((dayKey) => {
-          const dayEntries = entries.filter(
+          const dayEntries = typedEntries.filter(
             (e) => getShiftKey(e.date, e.hour) === dayKey
           );
 
@@ -51,22 +56,23 @@ export default function EntryDataTableClient() {
           const avgRow: Record<string, string | number> = { plant: "Average" };
           const nonNumericKeys = ["actions", "plant", "hour", "sample_type", "sample_description", "date"];
           const numericKeys = entriesColumns
-            .map((col) => (col as any).accessorKey)
+            .map((col) => col.id)
             .filter(
               (k): k is string =>
                 typeof k === "string" && !nonNumericKeys.includes(k)
             );
           numericKeys.forEach((key) => {
             const values = dayEntries
-              .map((item) =>
-                parseFloat(((item as any)[key] as string) || "0")
-              )
+              .map((item) => {
+                const val = item[key as keyof typeof item];
+                return typeof val === "string" ? parseFloat(val) : 0;
+              })
               .filter((v) => v > 0);
             const sum = values.reduce((total, v) => total + v, 0);
             const avg = values.length > 0 ? sum / values.length : 0;
             avgRow[key] = parseFloat(avg.toFixed(2));
           });
-          const dataWithAvg = [...dayEntries, avgRow as any];
+          const dataWithAvg = ([...dayEntries, avgRow] as unknown) as PrismaModels["LabInspection"][];
 
           return (
             <div key={dayKey}>
@@ -80,7 +86,7 @@ export default function EntryDataTableClient() {
                   <EntryDataTableToolbar table={table} />
                 )}
                 rowClassName={(row) =>
-                  (row as any).plant === "Average"
+                  row.plant === "Average"
                     ? "bg-sky-100 font-bold text-left"
                     : ""
                 }

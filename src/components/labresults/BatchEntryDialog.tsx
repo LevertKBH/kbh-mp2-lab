@@ -33,7 +33,7 @@ type BatchEntryDialogProps = {
   onOpenChange: (open: boolean) => void;
 };
 
-type EntryData = z.infer<typeof entrySchema>;
+type EntryData = Omit<z.infer<typeof entrySchema>, "id" | "created_at" | "updated_at">;
 
 export default function BatchEntryDialog({
   isOpen,
@@ -78,7 +78,7 @@ export default function BatchEntryDialog({
   const utils = api.useUtils();
   const batchMut = api.entries.batchCreateEntries.useMutation({
     onSuccess: () => {
-      utils.invalidate();
+      void utils.invalidate();
       toast.success("Batch entries created");
       form.reset();
       setStep(0);
@@ -87,7 +87,7 @@ export default function BatchEntryDialog({
     },
     onError: (err) => {
       toast.error("Batch creation failed", {
-        description: err instanceof Error ? err.message : String(err),
+        description: err instanceof Error ? err.message : JSON.stringify(err),
       });
     },
   });
@@ -108,12 +108,13 @@ export default function BatchEntryDialog({
   ] as const;
 
   // Zero out numeric fields if no sample selected
+const sampleType = form.watch("sample_type");
+
   useEffect(() => {
-    const type = form.getValues("sample_type");
-    if (type === "NS - No Sample") {
+    if (sampleType === "NS - No Sample") {
       numericFields.forEach((f) => form.setValue(f, "0"));
     }
-  }, [form.watch("sample_type")]);
+  }, [sampleType]);
 
   const goNext = form.handleSubmit((data) => {
     setCollected((prev) => [...prev, data]);
@@ -181,7 +182,10 @@ export default function BatchEntryDialog({
                     type="date"
                     required
                     disabled={step > 0}
-                    {...(field as any)}
+                    value={field.value as string}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    name={field.name}
                   />
                 </FormControl>
                 <FormMessage />
@@ -196,7 +200,7 @@ export default function BatchEntryDialog({
                 <FormLabel>Hour</FormLabel>
                 <FormControl>
                   <FormCombobox
-                    field={field as any}
+                    field={field}
                     onSelect={field.onChange}
                     options={validateHourValues}
                     disabled={step > 0}
@@ -213,7 +217,7 @@ export default function BatchEntryDialog({
               <FormItem className="space-y-1">
                 <FormLabel>Sample Type</FormLabel>
                 <FormControl>
-                  <FormCombobox field={field as any} onSelect={field.onChange} options={sampleTypeValues} />
+                  <FormCombobox field={field} onSelect={field.onChange} options={sampleTypeValues} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -227,7 +231,7 @@ export default function BatchEntryDialog({
                 <FormLabel>Sample Description</FormLabel>
                 <FormControl>
                   <FormCombobox
-                    field={field as any}
+                    field={field}
                     onSelect={field.onChange}
                     options={sampleDescriptionValues}
                     disabled
@@ -297,7 +301,10 @@ export default function BatchEntryDialog({
                       maxLength={6}
                       placeholder={`Enter ${label}`}
                       disabled={form.getValues("sample_type") === "NS - No Sample"}
-                      {...(field as any)}
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      name={field.name}
                     />
                   </FormControl>
                   <FormMessage />
@@ -334,7 +341,10 @@ export default function BatchEntryDialog({
                         maxLength={6}
                         placeholder={`Enter ${label}`}
                         disabled={false}
-                        {...(field as any)}
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
                       />
                     </FormControl>
                     <FormMessage />

@@ -166,8 +166,8 @@ export const entriesRouter = createTRPCRouter({
           entity_id: entry.id,
           description: `Lab Results entry created for ${entry.sample_description}`,
           metadata: JSON.stringify(entry),
-          performed_by_name: ctx.session.user.name!,
-          performed_by_identifier: ctx.session.user.email!,
+          performed_by_name: ctx.session.user.name,
+          performed_by_identifier: ctx.session.user.email,
           userId: ctx.session.user.id,
         })),
       });

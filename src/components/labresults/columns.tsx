@@ -11,7 +11,7 @@ export const entriesColumns: ColumnDef<PrismaModels["LabInspection"]>[] = [
   {
     id: "actions",
     cell: ({ row }) =>
-      (row.original as any).hour === "Average" ? null : (
+      row.original.hour === "Average" ? null : (
         <EntryRowActions entry={row.original} />
       ),
   },
