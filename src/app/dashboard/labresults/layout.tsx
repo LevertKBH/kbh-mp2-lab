@@ -1,5 +1,3 @@
-import CreateEntryDialog from "@/components/labresults/create-entry-dialog";
-import BatchEntryButton from "@/components/labresults/BatchEntryButton";
 import PageLayout from "@/components/layout/page-layout";
 import {
   PageActions,
@@ -7,12 +5,14 @@ import {
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@/components/shared/page-header";
+import LabActions from "@/components/labresults/LabActions";
 
 export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <>
       <PageHeader>
@@ -21,8 +21,7 @@ export default function MainLayout({
           View and manage your Lab Results.
         </PageHeaderDescription>
         <PageActions>
-          <CreateEntryDialog />
-          <BatchEntryButton />
+          <LabActions />
         </PageActions>
       </PageHeader>
       <PageLayout>{children}</PageLayout>

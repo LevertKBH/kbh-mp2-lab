@@ -25,7 +25,7 @@ This version of the Lab results Application includes the following changes:
 
 ***
 RELEASE NOTE:
-Lab Results App – v3.0.0
+Lab Results App – v5.8.0
 - 
 
 Lab Results Application - Version 3.0.0 Release Notes

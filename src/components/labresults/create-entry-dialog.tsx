@@ -66,7 +66,9 @@ export default function CreateEntryDialog() {
       screen45: "",
       screen38: "",
       pan: "",
-      moisture: ""      
+      moisture: "",
+      s_perc: "",
+      aa_fe_perc: ""      
     },
   });
 
@@ -84,6 +86,7 @@ export default function CreateEntryDialog() {
 
   const selectedSampleType = form.watch("sample_type");
   const selectedPlant = form.watch("plant");
+  const selectedSampleDesc = form.watch("sample_description");
   return (
     <ResponsiveModal
       title="Add Lab Results"
@@ -139,7 +142,9 @@ export default function CreateEntryDialog() {
                         screen45: "",
                         screen38: "",
                         pan: "",
-                        moisture: "" 
+                        moisture: "",
+                        s_perc: "",
+                        aa_fe_perc: "" 
                         // Add more fields as in your defaultValues
                       });
                     }}
@@ -255,6 +260,43 @@ export default function CreateEntryDialog() {
               )}
             />
 
+          {(selectedPlant === "MP2" && selectedSampleDesc === "Product 1 ( Mags)") && (<FormField
+            control={form.control}
+            name="aa_fe_perc"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel htmlFor={`${id}-aa_fe_perc`}>AA Wet Chem % Fe</FormLabel>
+                <FormControl>
+                <Input
+                      id={`${id}-aa_fe_perc`}
+                      placeholder="Enter AA Wet Chem %Fe value"
+                      type="text" // Use "text" to get complete control
+                      autoComplete="off"
+                      required
+                      inputMode="decimal"
+                      pattern="^\d{1,2}(\.\d{1,2})?$"
+                      maxLength={6} // e.g. "99.99"
+                      // Custom restriction code:
+                      {...field}
+                      onChange={e => {
+                        const val = e.target.value
+                          .replace(/,/g, '')         // Remove all commas
+                          .replace(/[^0-9.]/g, '')   // Only keep digits and dots
+                          .replace(/(\..*)\./g, '$1'); // Only allow a single "."
+                        // Restrict to the format NN.NN:
+                        // - only one dot
+                        // - at most two digits before and after decimal
+                        if (/^\d{0,2}(\.\d{0,2})?$/.test(val) || val === "") {
+                          field.onChange(val);
+                        }
+                      }}
+                />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />)}
+
             <FormField
               control={form.control}
               name="sio_perc"
@@ -330,7 +372,7 @@ export default function CreateEntryDialog() {
             />)
             }
 
-            {(selectedPlant === "SAOB" || selectedPlant === "LIO" ) && (<FormField
+            {(selectedPlant === "SAOB" || selectedPlant === "LIO" ) || ( selectedPlant === "MP2"  && selectedSampleType === "Special Sample" ) && (<FormField
               control={form.control}
               name="p_perc"
               render={({ field }) => (
@@ -750,6 +792,28 @@ export default function CreateEntryDialog() {
                       type="number"
                       autoComplete="off"
                       required
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {selectedSampleType === "Special Sample" &&  selectedPlant === "MP2" &&(
+            <FormField
+              control={form.control}
+              name="s_perc"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel htmlFor={`${id}-s_perc`}>% S</FormLabel>
+                  <FormControl>
+                    <Input
+                      id={`${id}-s_perc`}
+                      placeholder="Enter S value"
+                      type="number"
+                      autoComplete="off"
                       {...field}
                     />
                   </FormControl>

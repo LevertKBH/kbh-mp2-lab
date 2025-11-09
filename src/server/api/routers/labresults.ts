@@ -68,7 +68,9 @@ export const entriesRouter = createTRPCRouter({
             screen45: input.screen45 ?? "0",
             screen38: input.screen38 ?? "0",
             pan: input.pan ?? "0",
-            moisture: input.moisture ?? "0"
+            moisture: input.moisture ?? "0",
+            s_perc: input.s_perc ?? "0",
+            aa_fe_perc: input.aa_fe_perc ?? "0",
           },
         });
 
@@ -101,7 +103,9 @@ export const entriesRouter = createTRPCRouter({
               screen45: entry.screen45,
               screen38: entry.screen38,
               pan: entry.pan,
-              moisture: entry.moisture
+              moisture: entry.moisture,
+              s_perc: entry.s_perc,
+              aa_fe_perc: entry.aa_fe_perc
             }),
             performed_by_name: ctx.session.user.name,
             performed_by_identifier: ctx.session.user.email,
@@ -149,6 +153,8 @@ export const entriesRouter = createTRPCRouter({
               screen38: entry.screen38 ?? "0",
               pan: entry.pan ?? "0",
               moisture: entry.moisture ?? "0",
+              s_perc: entry.s_perc ?? "0",
+              aa_fe_perc: entry.aa_fe_perc ?? "0",
             },
           })
         )
@@ -213,7 +219,9 @@ export const entriesRouter = createTRPCRouter({
               screen45: storedLabInspection.screen45,
               screen38: storedLabInspection.screen38,
               pan: storedLabInspection.pan,
-              moisture: storedLabInspection.moisture
+              moisture: storedLabInspection.moisture,
+              s_perc: storedLabInspection.s_perc,
+              aa_fe_perc: storedLabInspection.aa_fe_perc
             }),
             performed_by_name: ctx.session.user.name,
             performed_by_identifier: ctx.session.user.email,

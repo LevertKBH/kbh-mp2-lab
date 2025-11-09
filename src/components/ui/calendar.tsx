@@ -1,22 +1,10 @@
 "use client";
 
-import * as React from "react";
-import * as CalendarPrimitive from "@radix-ui/react-calendar";
+import "react-day-picker/dist/style.css";
+import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils";
 
-const Calendar = React.forwardRef<
-  React.ElementRef<typeof CalendarPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof CalendarPrimitive.Root>
->(({ className, ...props }, ref) => (
-  <CalendarPrimitive.Root
-    ref={ref}
-    className={cn(
-      "grid w-full max-w-xs grid-cols-7 gap-1 rounded-md border p-2 bg-white",
-      className
-    )}
-    {...props}
-  />
-));
-Calendar.displayName = "Calendar";
+// Wrap DayPicker as Calendar for consistency
+const Calendar = DayPicker;
 
 export { Calendar };

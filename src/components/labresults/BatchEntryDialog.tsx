@@ -70,6 +70,8 @@ export default function BatchEntryDialog({
       screen45: "",
       screen38: "",
       pan: "",
+      s_perc: "",
+      aa_fe_perc: ""
     },
   });
 
@@ -101,6 +103,8 @@ export default function BatchEntryDialog({
     "p2o5_perc",
     "cu_perc",
     "moisture",
+    "s_perc",
+    "aa_fe_perc"
   ] as const;
 
   // Zero out numeric fields if no sample selected
@@ -140,6 +144,8 @@ export default function BatchEntryDialog({
       screen45: "",
       screen38: "",
       pan: "",
+      s_perc: "",
+      aa_fe_perc: ""
     });
     setStep(nextIndex);
   });
@@ -254,8 +260,11 @@ export default function BatchEntryDialog({
             ["fe_perc", "% Fe"],
             ["sio_perc", "% SiO₂"],
             ...(form.getValues("plant") === "LIO" ? [["al2o3_perc", "% Al₂O₃"]] : []),
-            ...(form.getValues("plant") === "SAOB" || form.getValues("plant") === "LIO"
+            ...(form.getValues("plant") === "SAOB" || form.getValues("plant") === "LIO" || (form.getValues("plant") === "MP2" && form.getValues("sample_type") === "Special Sample")
               ? [["p_perc", "% P"]]
+              : []),
+            ...(form.getValues("plant") === "MP2" && form.getValues("sample_description") === "Product 1 ( Mags)"
+              ? [["aa_fe_perc", "AA Wet Chem % Fe"]]
               : []),
             ["tio_perc", "% TiO₂"],
             ["mgo_perc", "% MgO"],
@@ -265,6 +274,9 @@ export default function BatchEntryDialog({
                   ["p2o5_perc", "% P₂O₅"],
                   ["cu_perc", "% Cu"],
                 ]
+              : []),
+            ...(form.getValues("plant") === "MP2" && form.getValues("sample_type") === "Special Sample"
+              ? [["s_perc", "S"]]
               : []),
             ["moisture", "Moisture"],
           ] as const).map(([name, label]) => (
@@ -281,6 +293,7 @@ export default function BatchEntryDialog({
                       type="text"
                       autoComplete="off"
                       inputMode="decimal"
+                      pattern="^\\d{1,2}(\\.\\d{1,2})?$"
                       maxLength={6}
                       placeholder={`Enter ${label}`}
                       disabled={form.getValues("sample_type") === "NS - No Sample"}
