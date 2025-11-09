@@ -85,7 +85,8 @@ export function EntryDataTableToolbar<TData>({
       const start = new Date(sd.setHours(6, 0, 0, 0));
       const end = new Date(addDays(sd, 1).setHours(6, 0, 0, 0));
       const shiftFiltered = entriesToExport.filter((e) => {
-        const hh = e.hour.match(/\d+/)?.[0] ?? "00";
+        const exec = /\d+/.exec(e.hour);
+        const hh = exec ? exec[0] : "00";
         const dt = new Date(`${e.date}T${hh.padStart(2, "0")}:00:00`);
         return dt >= start && dt < end;
       });
@@ -102,9 +103,10 @@ export function EntryDataTableToolbar<TData>({
     setExporting(true);
     // build sheet data with selected columns
     const sheetData = rows.map((row) => {
-      const record: Record<string, any> = {};
+      const record: Record<string, unknown> = {};
       exportColumns.forEach((colId) => {
-        record[colId] = (row as any)[colId];
+        const key = colId as keyof Entry;
+        record[colId] = row[key];
       });
       return record;
     });

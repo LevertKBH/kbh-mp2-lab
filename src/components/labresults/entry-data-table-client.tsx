@@ -24,7 +24,7 @@ export default function EntryDataTableClient() {
   );
 
   // Ensure correct typing for entries array
-  const typedEntries = entries as PrismaModels["LabInspection"][];
+  const typedEntries: PrismaModels["LabInspection"][] = entries;
 
   const shiftKeys = Array.from(
     new Set(typedEntries.map((e) => getShiftKey(e.date, e.hour)))

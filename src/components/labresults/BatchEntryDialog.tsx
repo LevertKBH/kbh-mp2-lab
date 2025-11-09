@@ -182,7 +182,7 @@ const sampleType = form.watch("sample_type");
                     type="date"
                     required
                     disabled={step > 0}
-                    value={field.value as string}
+                    value={field.value}
                     onChange={field.onChange}
                     onBlur={field.onBlur}
                     name={field.name}

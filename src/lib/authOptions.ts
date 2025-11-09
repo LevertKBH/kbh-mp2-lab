@@ -1,6 +1,7 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 import { env } from "@/env";
+import type { BetterAuthUser } from "@/types/user-model";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -21,7 +22,7 @@ export const authOptions: NextAuthOptions = {
           }),
         });
         if (!res.ok) return null;
-        const user = await res.json();
+        const user = (await res.json()) as BetterAuthUser;
         return user ?? null;
       },
     }),
