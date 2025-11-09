@@ -15,7 +15,7 @@ type Lab = PrismaModels["LabInspection"];
 type LabKey = keyof Lab;
 
 // If entriesColumns isn't already typed as ColumnDef<Lab, unknown>[], we coerce it here.
-const labEntriesColumns = entriesColumns as unknown as ColumnDef<Lab, unknown>[];
+const labEntriesColumns = entriesColumns as ColumnDef<Lab, unknown>[];
 
 // ColumnDef may or may not have an accessorKey. This guard narrows it safely.
 function hasAccessorKey<T>(
