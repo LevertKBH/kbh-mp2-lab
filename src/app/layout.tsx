@@ -1,12 +1,12 @@
 import "@/styles/globals.css";
-import { Toaster } from "sonner";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/authOptions";
 
 import { type Metadata } from "next";
 
 import { cn } from "@/lib/utils";
-import { ThemeProvider } from "@/providers/providers";
-import { TRPCReactProvider } from "@/trpc/react";
 import localFont from "next/font/local";
+import Providers from "./Providers";
 
 export const metadata: Metadata = {
   title: "MP2 Lab Results",
@@ -36,9 +36,10 @@ const fontSans = localFont({
   variable: "--font-sans",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await getServerSession(authOptions);
   return (
     <html lang="en" className={`${fontSans.variable}`} suppressHydrationWarning>
       <body
@@ -47,20 +48,9 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-          enableColorScheme
-        >
-          <div vaul-drawer-wrapper="">
-            <div className="relative flex min-h-svh flex-col bg-background">
-              <TRPCReactProvider>{children}</TRPCReactProvider>
-            </div>
-          </div>
-        </ThemeProvider>
-        <Toaster richColors position="top-right" />
+        <Providers session={session}>
+          {children}
+        </Providers>
       </body>
     </html>
   );

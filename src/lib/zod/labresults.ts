@@ -25,6 +25,8 @@ export const entrySchema = z.object({
   screen45: z.string().optional(),
   screen38: z.string().optional(),
   pan: z.string().optional(),
+  s_perc: z.string().optional(),
+  aa_fe_perc: z.string().optional(),
   moisture: z.string().optional(),
   created_at: z.date().optional(),
   updated_at: z.date().optional(),

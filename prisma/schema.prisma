@@ -173,6 +173,8 @@ model LabInspection {
   screen38           String 
   pan                String
   moisture           String
+  s_perc             String @default("")
+  aa_fe_perc         String @default("")
   userId             String
   user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   created_at         DateTime? @default(now())
@@ -207,6 +209,8 @@ model DeletedLabInspection {
   screen38           String 
   pan                String
   moisture           String
+  s_perc             String @default("")
+  aa_fe_perc         String @default("")
   userId             String
   user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   created_at         DateTime? @default(now())

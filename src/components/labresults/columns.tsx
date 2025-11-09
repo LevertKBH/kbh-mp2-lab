@@ -10,7 +10,10 @@ import EntryRowActions from "./row-actions";
 export const entriesColumns: ColumnDef<PrismaModels["LabInspection"]>[] = [
   {
     id: "actions",
-    cell: ({ row }) => <EntryRowActions entry={row.original} />,
+    cell: ({ row }) =>
+      row.original.hour === "Average" ? null : (
+        <EntryRowActions entry={row.original} />
+      ),
   },
   {
     accessorKey: "plant",
@@ -23,7 +26,7 @@ export const entriesColumns: ColumnDef<PrismaModels["LabInspection"]>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Hour" />
     ),
-  },  
+  },
   {
     accessorKey: "sample_type",
     header: ({ column }) => (
@@ -148,6 +151,18 @@ export const entriesColumns: ColumnDef<PrismaModels["LabInspection"]>[] = [
     accessorKey: "screen38",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="+38µ" />
+    ),
+  },
+  {
+    accessorKey: "s_perc",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="% S" />
+    ),
+  },
+  {
+    accessorKey: "aa_fe_perc",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="AA Wet Chem % Fe" />
     ),
   },
   {

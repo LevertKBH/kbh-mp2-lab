@@ -4,6 +4,7 @@ import type { Table as TableType } from "@tanstack/react-table";
 import {
   type ColumnDef,
   type ColumnFiltersState,
+    type PaginationState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -29,18 +30,28 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   toolbar: (table: TableType<TData>) => React.ReactNode;
+  rowClassName?: (row: TData) => string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   toolbar,
+  rowClassName,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+    // Pagination state: show all rows (including average) on single page
+    const defaultPageSize = data.length + 1;
+    const [pagination, setPagination] = useState<PaginationState>({
+      pageIndex: 0,
+      pageSize: defaultPageSize,
+    });
 
   const table = useReactTable({
+      initialState: { pagination },
+      onPaginationChange: setPagination,
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
@@ -51,10 +62,11 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-    },
+          pagination,
+          sorting,
+          columnFilters,
+          columnVisibility,
+        },
   });
 
   return (
@@ -86,6 +98,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className={rowClassName?.(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

@@ -2,7 +2,7 @@ import { entrySchema } from "@/lib/zod/labresults";
 import { api } from "@/trpc/react";
 import { type PrismaModels } from "@/types/db-models";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type FC, useId } from "react";
+import { type FC, useId, useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
@@ -70,7 +70,9 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
       screen45: entry.screen45,
       screen38: entry.screen38,
       pan: entry.pan,
-      moisture: entry.moisture     
+      moisture: entry.moisture,
+      s_perc: entry.s_perc,
+      aa_fe_perc: entry.aa_fe_perc        
     },
   });
 
@@ -88,6 +90,48 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
 
 
   const selectedSampleType = form.watch("sample_type");
+  const prevSampleTypeRef = useRef(form.getValues("sample_type"));
+  const selectedSampleDesc = form.watch("sample_description");
+  useEffect(() => {
+    if (
+      selectedSampleType === "NS - No Sample" &&
+      prevSampleTypeRef.current !== "NS - No Sample"
+    ) {
+      if (
+        !confirm(
+          "Switching to ‘NS - No Sample’ will reset all values to 0. Do you want to continue?"
+        )
+      ) {
+        form.setValue("sample_type", prevSampleTypeRef.current);
+      } else {
+        const toZero = [
+          "fe_perc",
+          "sio_perc",
+          "al2o3_perc",
+          "p_perc",
+          "tio_perc",
+          "mgo_perc",
+          "cao_perc",
+          "p2o5_perc",
+          "cu_perc",
+          "moisture",
+          "screen425",
+          "screen212",
+          "screen150",
+          "screen75",
+          "screen106",
+          "screen53",
+          "screen45",
+          "screen38",
+          "pan",
+          "s_perc",
+          "aa_fe_perc"
+        ] as const;
+        toZero.forEach((f) => form.setValue(f, "0"));
+        prevSampleTypeRef.current = "NS - No Sample";
+      }
+    }
+  }, [selectedSampleType]);
   const selectedPlant = form.watch("plant");
   return (
     <ResponsiveModal
@@ -237,6 +281,43 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
             )}
           />
 
+          {(selectedPlant === "MP2" && selectedSampleDesc === "Product 1 ( Mags)") && (<FormField
+            control={form.control}
+            name="aa_fe_perc"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel htmlFor={`${id}-aa_fe_perc`}>AA Wet Chem % Fe</FormLabel>
+                <FormControl>
+                <Input
+                      id={`${id}-aa_fe_perc`}
+                      placeholder="Enter AA Wet Chem %Fe value"
+                      type="text" // Use "text" to get complete control
+                      autoComplete="off"
+                      required
+                      inputMode="decimal"
+                      pattern="^\d{1,2}(\.\d{1,2})?$"
+                      maxLength={6} // e.g. "99.99"
+                      // Custom restriction code:
+                      {...field}
+                      onChange={e => {
+                        const val = e.target.value
+                          .replace(/,/g, '')         // Remove all commas
+                          .replace(/[^0-9.]/g, '')   // Only keep digits and dots
+                          .replace(/(\..*)\./g, '$1'); // Only allow a single "."
+                        // Restrict to the format NN.NN:
+                        // - only one dot
+                        // - at most two digits before and after decimal
+                        if (/^\d{0,2}(\.\d{0,2})?$/.test(val) || val === "") {
+                          field.onChange(val);
+                        }
+                      }}
+                />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />)}
+
           <FormField
             control={form.control}
             name="sio_perc"
@@ -312,8 +393,8 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
           />)
           }
 
-          {(selectedPlant === "SAOB" || selectedPlant === "LIO" ) && (<FormField
-            control={form.control}
+            {(selectedPlant === "SAOB" || selectedPlant === "LIO" ) || ( selectedPlant === "MP2"  && selectedSampleType === "Special Sample" ) && (<FormField
+              control={form.control}
             name="p_perc"
             render={({ field }) => (
               <FormItem className="space-y-2">
@@ -729,6 +810,29 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
                   <Input
                     id={`${id}-pan`}
                     placeholder="Enter Pan value"
+                    type="number"
+                    autoComplete="off"
+                    required
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        {selectedSampleType === "Special Sample" &&  selectedPlant === "MP2" &&(
+          <FormField
+            control={form.control}
+            name="s_perc"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel htmlFor={`${id}-s_perc`}>% S</FormLabel>
+                <FormControl>
+                  <Input
+                    id={`${id}-s_perc`}
+                    placeholder="Enter S value"
                     type="number"
                     autoComplete="off"
                     required

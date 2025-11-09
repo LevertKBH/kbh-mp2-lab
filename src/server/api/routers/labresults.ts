@@ -68,7 +68,9 @@ export const entriesRouter = createTRPCRouter({
             screen45: input.screen45 ?? "0",
             screen38: input.screen38 ?? "0",
             pan: input.pan ?? "0",
-            moisture: input.moisture ?? "0"
+            moisture: input.moisture ?? "0",
+            s_perc: input.s_perc ?? "0",
+            aa_fe_perc: input.aa_fe_perc ?? "0",
           },
         });
 
@@ -101,7 +103,9 @@ export const entriesRouter = createTRPCRouter({
               screen45: entry.screen45,
               screen38: entry.screen38,
               pan: entry.pan,
-              moisture: entry.moisture
+              moisture: entry.moisture,
+              s_perc: entry.s_perc,
+              aa_fe_perc: entry.aa_fe_perc
             }),
             performed_by_name: ctx.session.user.name,
             performed_by_identifier: ctx.session.user.email,
@@ -116,6 +120,58 @@ export const entriesRouter = createTRPCRouter({
           message: "Failed to create entry",
         });
       }
+    }),
+/**
+   * Create multiple entries in batch.
+   */
+  batchCreateEntries: protectedProcedure
+    .input(z.array(entrySchema))
+    .mutation(async ({ ctx, input }) => {
+      const created = await ctx.db.$transaction(
+        input.map((entry) =>
+          ctx.db.labInspection.create({
+            data: {
+              ...entry,
+              userId: ctx.session.user.id,
+              hour: entry.hour ?? "0",
+              fe_perc: entry.fe_perc ?? "0",
+              sio_perc: entry.sio_perc ?? "0",
+              al2o3_perc: entry.al2o3_perc ?? "0",
+              p_perc: entry.p_perc ?? "0",
+              tio_perc: entry.tio_perc ?? "0",
+              mgo_perc: entry.mgo_perc ?? "0",
+              cao_perc: entry.cao_perc ?? "0",
+              p2o5_perc: entry.p2o5_perc ?? "0",
+              cu_perc: entry.cu_perc ?? "0",
+              screen425: entry.screen425 ?? "0",
+              screen212: entry.screen212 ?? "0",
+              screen150: entry.screen150 ?? "0",
+              screen75: entry.screen75 ?? "0",
+              screen106: entry.screen106 ?? "0",
+              screen53: entry.screen53 ?? "0",
+              screen45: entry.screen45 ?? "0",
+              screen38: entry.screen38 ?? "0",
+              pan: entry.pan ?? "0",
+              moisture: entry.moisture ?? "0",
+              s_perc: entry.s_perc ?? "0",
+              aa_fe_perc: entry.aa_fe_perc ?? "0",
+            },
+          })
+        )
+      );
+      await ctx.db.auditLog.createMany({
+        data: created.map((entry) => ({
+          action: "create",
+          entity_type: "labinspection",
+          entity_id: entry.id,
+          description: `Lab Results entry created for ${entry.sample_description}`,
+          metadata: JSON.stringify(entry),
+          performed_by_name: ctx.session.user.name,
+          performed_by_identifier: ctx.session.user.email,
+          userId: ctx.session.user.id,
+        })),
+      });
+      return created;
     }),
   deleteEntry: adminProcedure
     .input(z.object({ id: z.string() }))
@@ -163,7 +219,9 @@ export const entriesRouter = createTRPCRouter({
               screen45: storedLabInspection.screen45,
               screen38: storedLabInspection.screen38,
               pan: storedLabInspection.pan,
-              moisture: storedLabInspection.moisture
+              moisture: storedLabInspection.moisture,
+              s_perc: storedLabInspection.s_perc,
+              aa_fe_perc: storedLabInspection.aa_fe_perc
             }),
             performed_by_name: ctx.session.user.name,
             performed_by_identifier: ctx.session.user.email,
