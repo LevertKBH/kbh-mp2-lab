@@ -51,7 +51,7 @@ export default function EntryDataTableClient() {
   );
 
   // Ensure correct typing for entries array
-  const typedEntries: Lab[] = entries as Lab[];
+  const typedEntries: Lab[] = entries;
 
   const shiftKeys = Array.from(
     new Set(typedEntries.map((e) => getShiftKey(e.date, e.hour)))
