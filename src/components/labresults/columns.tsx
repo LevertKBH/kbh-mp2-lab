@@ -26,7 +26,7 @@ export const entriesColumns: ColumnDef<PrismaModels["LabInspection"]>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Hour" />
     ),
-  },  
+  },
   {
     accessorKey: "sample_type",
     header: ({ column }) => (

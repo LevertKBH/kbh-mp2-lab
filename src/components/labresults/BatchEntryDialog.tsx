@@ -110,6 +110,7 @@ export default function BatchEntryDialog({
   // Zero out numeric fields if no sample selected
 const sampleType = form.watch("sample_type");
 
+// eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (sampleType === "NS - No Sample") {
       numericFields.forEach((f) => form.setValue(f, "0"));
