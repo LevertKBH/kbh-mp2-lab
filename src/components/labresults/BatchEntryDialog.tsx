@@ -356,13 +356,13 @@ const sampleType = form.watch("sample_type");
             {step < sampleDescriptionValues.length - 1 ? (
               <>
                 <Button onClick={goNext}>Next</Button>
-                <Button variant="secondary" onClick={finish}>
-                  Complete
+                <Button variant="secondary" onClick={finish} disabled={batchMut.status === "pending"}>
+                  {batchMut.status === "pending" ? "Processing..." : "Complete"}
                 </Button>
               </>
             ) : (
-              <Button variant="secondary" onClick={finish}>
-                Complete
+              <Button variant="secondary" onClick={finish} disabled={batchMut.status === "pending"}>
+                {batchMut.status === "pending" ? "Processing..." : "Complete"}
               </Button>
             )}
           </div>
