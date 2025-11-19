@@ -149,16 +149,6 @@ export function EntryDataTableToolbar<TData>({
         </SelectContent>
       </Select>
 
-      <div className="flex flex-1 items-center space-x-2">
-        <Input
-          placeholder="Filter by Plant..."
-          value={(table.getColumn("plant")?.getFilterValue() as string) ?? ""}
-          onChange={(e) =>
-            table.getColumn("plant")?.setFilterValue(e.target.value)
-          }
-          className="h-8 w-[150px] lg:w-[250px]"
-        />
-      </div>
 
       <div className="flex items-center space-x-2">
         <Dialog>

@@ -95,52 +95,49 @@ export default function EntryDataTableClient() {
             .map((col) => col.accessorKey as LabKey)
             .filter((k) => !nonNumericSet.has(k));
 
-          // build an average row; values stored as strings with 2 decimals
-          // (switch to Number(avg.toFixed(2)) if your schema expects numbers)
-          const avgRow: Partial<Lab> & { plant: Lab["plant"] } = {
-            plant: "Average" as Lab["plant"],
-          };
-
-          numericKeys.forEach((key) => {
-            // collect numeric values, excluding empties and zeros
-            const values = dayEntries
-              .map((item) => toNumberOrNaN(item[key]))
-              .filter((n): n is number => Number.isFinite(n) && n !== 0);
-
-            if (values.length === 0) {
-              // no meaningful values -> blank cell
-              (avgRow as Record<LabKey, unknown>)[key] = "" as Lab[LabKey];
-              return;
-            }
-
-            const sum = values.reduce((acc, n) => acc + n, 0);
-            const avg = sum / values.length;
-
-            // Store as string for display-friendly cells
-            (avgRow as Record<LabKey, unknown>)[key] = avg.toFixed(2) as Lab[LabKey];
-            // If your schema requires numbers instead:
-            // (avgRow as Record<LabKey, unknown>)[key] = Number(avg.toFixed(2)) as Lab[LabKey];
-          });
-
-          const dataWithAvg: Lab[] = [...dayEntries, avgRow as Lab];
+          // day-level average row removed; subdividing by sample below
 
           return (
-            <div key={dayKey}>
-              <h2 className="text-xl font-semibold mb-2">
+            <div key={dayKey} className="pt-6 border-t border-gray-200 mb-4">
+              <h2 className="text-2xl font-bold mb-3">
                 {dayKey} Shift
               </h2>
-              <DataTable<Lab, unknown>
-                columns={labEntriesColumns}
-                data={dataWithAvg}
-                toolbar={(table) => (
-                  <EntryDataTableToolbar table={table} />
-                )}
-                rowClassName={(row) =>
-                  row.plant === "Average"
-                    ? "bg-sky-100 font-bold text-left"
-                    : ""
-                }
-              />
+              {Array.from(new Set(dayEntries.map((e) => e.sample_description))).map((sample) => {
+                const sampleEntries = dayEntries.filter((e) => e.sample_description === sample);
+                const avgRowSample: Partial<Lab> & { plant: Lab["plant"] } = {
+                  plant: "Average" as Lab["plant"],
+                };
+                numericKeys.forEach((key) => {
+                  const values = sampleEntries
+                    .map((item) => toNumberOrNaN(item[key]))
+                    .filter((n): n is number => Number.isFinite(n) && n !== 0);
+                  if (values.length === 0) {
+                    (avgRowSample as Record<LabKey, unknown>)[key] = "" as Lab[LabKey];
+                  } else {
+                    const sum = values.reduce((acc, n) => acc + n, 0);
+                    const avg = sum / values.length;
+                    (avgRowSample as Record<LabKey, unknown>)[key] = avg.toFixed(2) as Lab[LabKey];
+                  }
+                });
+                const dataWithAvgSample: Lab[] = [...sampleEntries, avgRowSample as Lab];
+                return (
+                  <div key={sample} className="mb-6">
+                    <h3 className="text-sm font-medium mb-1">{sample}</h3>
+                    <DataTable<Lab, unknown>
+                      columns={labEntriesColumns}
+                      data={dataWithAvgSample}
+                      toolbar={(table) => (
+                        <EntryDataTableToolbar table={table} />
+                      )}
+                      rowClassName={(row) =>
+                        row.plant === "Average"
+                          ? "bg-sky-100 font-bold text-left"
+                          : ""
+                      }
+                    />
+                  </div>
+                );
+              })}
             </div>
           );
         })}
