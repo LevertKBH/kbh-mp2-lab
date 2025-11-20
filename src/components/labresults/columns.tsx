@@ -2,7 +2,7 @@
 
 import { type PrismaModels } from "@/types/db-models";
 import { type ColumnDef } from "@tanstack/react-table";
-import { differenceInHours, differenceInMinutes, format } from "date-fns";
+import { differenceInHours, differenceInMinutes, format, parseISO, isValid } from "date-fns";
 import { DataTableColumnHeader } from "../shared/table/column-header";
 import { Badge } from "../ui/badge";
 import EntryRowActions from "./row-actions";
@@ -20,7 +20,18 @@ export const entriesColumns: ColumnDef<PrismaModels["LabInspection"]>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Plant" />
     ),
-  },  
+  },
+  {
+    accessorKey: "date",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Date" />
+    ),
+    cell: ({ row }) => {
+      const raw = row.original.date;
+      const dt = typeof raw === "string" ? parseISO(raw) : new Date(raw);
+      return isValid(dt) ? format(dt, "dd-MMM-yy") : "";
+    },
+  },
   {
     accessorKey: "hour",
     header: ({ column }) => (
@@ -37,12 +48,6 @@ export const entriesColumns: ColumnDef<PrismaModels["LabInspection"]>[] = [
     accessorKey: "sample_description",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Sample Description" />
-    ),
-  },
-  {
-    accessorKey: "date",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Date" />
     ),
   },
   {
