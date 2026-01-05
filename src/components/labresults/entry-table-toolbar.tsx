@@ -51,8 +51,6 @@ export function EntryDataTableToolbar<TData>({
   const [shiftDate, setShiftDate] = useState<string>("");
   const [exporting, setExporting] = useState(false);
   const [exportType, setExportType] = useState<"excel" | "hourly-dist" | "foskor-dist">("excel");
-  // Removed TRPC mutation hook to use direct Next.js API export
-const exportFoskor = api.reports.exportFoskorHourlyDistribution.useMutation();
 
   const allColumnIds = table.getAllLeafColumns().map((c) => c.id);
   const [exportColumns, setExportColumns] = useState<string[]>(allColumnIds);
@@ -89,7 +87,8 @@ const exportFoskor = api.reports.exportFoskorHourlyDistribution.useMutation();
   const plantOptions = allEntries
     ? Array.from(new Set(allEntries.map((e) => e.plant)))
     : [];
-  // Foskor-specific PDF export helper (declared before handleExport)
+
+  // Foskor-specific PDF export helper
   const exportFoskorDistribution = async () => {
     if (!startDate || !selectedHours[0]) return;
     setExporting(true);
@@ -111,11 +110,11 @@ const exportFoskor = api.reports.exportFoskorHourlyDistribution.useMutation();
     }
   };
 
-  const handleExport = () => {
+  const handleExport = async () => {
     if (exportType === "hourly-dist") {
-      exportHourlyDistribution();
+      await exportHourlyDistribution();
     } else if (exportType === "foskor-dist") {
-      exportFoskorDistribution();
+      await exportFoskorDistribution();
     } else if (exportByShift && shiftDate) {
       const sd = parseISO(shiftDate);
       const start = new Date(sd.setHours(6, 0, 0, 0));
@@ -238,13 +237,12 @@ const exportFoskor = api.reports.exportFoskorHourlyDistribution.useMutation();
                   <RadioGroupItem value="hourly-dist" id="type-hourly" />
                   <Label htmlFor="type-hourly">Hourly Distribution</Label>
                 </div>
-<div className="flex items-center space-x-2">
-                    <RadioGroupItem value="foskor-dist" id="type-foskor" />
-                    <Label htmlFor="type-foskor">Foskor Hourly Distribution</Label>
-                  </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="foskor-dist" id="type-foskor" />
+                  <Label htmlFor="type-foskor">Foskor Hourly Distribution</Label>
+                </div>
               </RadioGroup>
             </div>
-            {/* Debug: show selected export type */}
             <div className="text-sm text-gray-500 dark:text-gray-400">
               Current type: {exportType}
             </div>
@@ -422,7 +420,7 @@ const exportFoskor = api.reports.exportFoskorHourlyDistribution.useMutation();
             </div>
             <DialogFooter>
               <Button
-                onClick={handleExport}
+                onClick={() => void handleExport()} // Using void operator to handle promise
                 disabled={!hasEntries || isExportLoading || exporting}
               >
                 {exporting ? "Exporting..." : "Export"}
