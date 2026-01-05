@@ -1,8 +1,7 @@
-import PDFDocument from "pdfkit/js/pdfkit.standalone.js";
+import PDFDocument from "pdfkit"; // Changed from standalone version
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import type { LabInspection } from "@prisma/client";
-import path from "path";
 
 /**
  * Generate a PDF for given entries with title.
@@ -13,9 +12,10 @@ const createPdfBase64 = async (
   date: string,
   hour: string
 ): Promise<string> => {
-  const doc: any = new PDFDocument({ size: "A4", margin: 40 });
+  const doc = new PDFDocument({ size: "A4", margin: 40 });
   const chunks: Buffer[] = [];
   doc.on("data", (chunk: Buffer) => chunks.push(chunk));
+  
   const endPromise = new Promise<Buffer>((resolve, reject) => {
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", (err: Error) => reject(err));
@@ -45,20 +45,25 @@ const createPdfBase64 = async (
     "%H2O",
   ];
   const colWidths: number[] = [120, 52, 52, 52, 52, 52, 52, 52, 52];
-  const headerHeight =
-    Math.max(
-      ...columns.map((col, i) =>
-        doc.heightOfString(col, { width: colWidths[i]! - cellPadding * 2 })
-      )
-    ) +
-    cellPadding * 2;
+  
+  // Calculate header height
+  let maxHeaderHeight = 0;
+  columns.forEach((col, i) => {
+    const textHeight = doc.heightOfString(col, { width: colWidths[i]! - cellPadding * 2 });
+    if (textHeight > maxHeaderHeight) {
+      maxHeaderHeight = textHeight;
+    }
+  });
+  const headerHeight = maxHeaderHeight + cellPadding * 2;
+  
   const dataRowHeight = 35;
   const tableWidth = colWidths.reduce((sum, w) => sum + w, 0);
-  const tableLeft = doc.x ?? 0;
+  const tableLeft = doc.x || 0;
 
   // Draw grid
   doc.lineWidth(0.5);
-  // Horizontal
+  
+  // Horizontal lines
   for (let i = 0; i <= entries.length + 1; i++) {
     const y =
       tableTop +
@@ -69,33 +74,42 @@ const createPdfBase64 = async (
         : headerHeight + (i - 1) * dataRowHeight);
     doc.moveTo(tableLeft, y).lineTo(tableLeft + tableWidth, y).stroke();
   }
-  // Vertical
+  
+  // Vertical lines
   let xLine = tableLeft;
   for (let i = 0; i <= colWidths.length; i++) {
     doc
       .moveTo(xLine, tableTop)
       .lineTo(xLine, tableTop + headerHeight + entries.length * dataRowHeight)
       .stroke();
-    xLine += colWidths[i] ?? 0;
+    if (colWidths[i] !== undefined) {
+      xLine += colWidths[i]!;
+    }
   }
 
   // Header text
   doc.font("Helvetica-Bold").fontSize(10);
   let textX = tableLeft + cellPadding;
   const headerY = tableTop + cellPadding;
+  
   columns.forEach((col, i) => {
-    doc.text(col, textX, headerY, {
-      width: colWidths[i]! - cellPadding * 2,
-      ellipsis: true,
-    });
-    textX += colWidths[i]!;
+    const colWidth = colWidths[i];
+    if (colWidth !== undefined) {
+      doc.text(col, textX, headerY, {
+        width: colWidth - cellPadding * 2,
+        ellipsis: true,
+      });
+      textX += colWidth;
+    }
   });
 
   // Rows
   doc.font("Helvetica").fontSize(10);
+  
   entries.forEach((row, rowIndex) => {
     const yPos = tableTop + headerHeight + rowIndex * dataRowHeight + cellPadding;
     let xCell = tableLeft + cellPadding;
+    
     const cells = [
       row.sample_description,
       row.fe_perc,
@@ -107,12 +121,17 @@ const createPdfBase64 = async (
       row.cu_perc,
       row.moisture,
     ];
+    
     cells.forEach((cell, i) => {
-      doc.text(String(cell), xCell, yPos, {
-        width: colWidths[i]! - cellPadding * 2,
-        ellipsis: true,
-      });
-      xCell += colWidths[i]!;
+      const colWidth = colWidths[i];
+      if (colWidth !== undefined) {
+        const cellValue = cell !== null && cell !== undefined ? String(cell) : "";
+        doc.text(cellValue, xCell, yPos, {
+          width: colWidth - cellPadding * 2,
+          ellipsis: true,
+        });
+        xCell += colWidth;
+      }
     });
   });
 
