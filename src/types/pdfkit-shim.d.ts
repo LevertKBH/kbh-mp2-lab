@@ -3,9 +3,8 @@
  * All imports return `any` to bypass missing type definitions
  * and allow usage of embedStandardFonts and PDFDocument methods.
  */
-
 declare module "pdfkit/js/pdfkit.standalone.js" {
-  const PDFDocument: any;
+  const PDFDocument: unknown;
   export default PDFDocument;
 }
 
