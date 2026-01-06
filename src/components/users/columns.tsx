@@ -46,7 +46,14 @@ export const usersColumns: ColumnDef<UserWithRole>[] = [
           return (
             <Badge variant="outline">
               <ShieldIcon className="mr-2 h-4 w-4" />
-              Member
+              Member - User
+            </Badge>
+          );
+        case "mp2-view-only":
+          return (
+            <Badge variant="outline">
+              <ShieldIcon className="mr-2 h-4 w-4" />
+              Member - MP2 View Only
             </Badge>
           );
       }
