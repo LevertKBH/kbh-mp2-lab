@@ -7,7 +7,7 @@ export type CreateUserBody = {
   name: string;
   email: string;
   password: string;
-  role: "admin" | "user";
+  role: "admin" | "user" | "mp2-view-only";
 };
 
 export async function signIn(email: string, password: string) {

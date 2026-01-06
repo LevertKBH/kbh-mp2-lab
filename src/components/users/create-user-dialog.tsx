@@ -87,7 +87,7 @@ export default function CreateUserDialog() {
               email: data.email,
               password: data.password,
               name: data.name,
-              role: data.role as "admin" | "user",
+              role: data.role as "admin" | "user" | "mp2-view-only",
             }),
           )}
         >
@@ -204,6 +204,27 @@ export default function CreateUserDialog() {
                               className="text-xs text-muted-foreground"
                             >
                               Able to access user management
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
+                          <RadioGroupItem
+                            value="mp2-view-only"
+                            id={`${id}-mp2-view-only`}
+                            aria-describedby={`${id}-mp2-view-only-description`}
+                            className="order-1 after:absolute after:inset-0"
+                          />
+                          <div className="grid grow gap-1">
+                            <Label htmlFor={`${id}-mp2-view-only`}>MP2 View Only</Label>
+                            <p
+                              id={`${id}-mp2-view-only-description`}
+                              className="text-xs text-muted-foreground"
+                            >
+                              Can view MP2 lab results only
                             </p>
                           </div>
                         </div>

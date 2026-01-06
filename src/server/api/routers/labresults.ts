@@ -41,7 +41,7 @@ export const entriesRouter = createTRPCRouter({
         orderBy: { created_at: "desc" },
       });
     }),
-  createEntry: protectedProcedure
+  createEntry: adminProcedure
     .input(entrySchema)
     .mutation(async ({ ctx, input }) => {
       try {
@@ -124,7 +124,7 @@ export const entriesRouter = createTRPCRouter({
 /**
    * Create multiple entries in batch.
    */
-  batchCreateEntries: protectedProcedure
+  batchCreateEntries: adminProcedure
     .input(z.array(entrySchema))
     .mutation(async ({ ctx, input }) => {
       const created = await ctx.db.$transaction(
@@ -270,7 +270,7 @@ return updatedEntry;
         });
       }
     }),
-  resolveEntry: protectedProcedure
+  resolveEntry: adminProcedure
     .input(
       z.object({
         id: z.string(),

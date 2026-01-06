@@ -6,7 +6,7 @@ export type BetterAuthCreateUser = Parameters<
   typeof authClient.admin.createUser
 >[0];
 export type BetterAuthUpdateUser = {
-  role: "user" | "admin";
+  role: "user" | "admin" | "mp2-view-only";
 };
 
 export const betterAuthUserSchema = z.custom<BetterAuthUser>();
@@ -14,8 +14,8 @@ export const betterAuthCreateUserSchema = z.object({
   email: z.string(),
   password: z.string(),
   name: z.string(),
-  role: z.enum(["user", "admin"]),
+  role: z.enum(["user", "admin", "mp2-view-only"]),
 });
 export const betterAuthUpdateUserSchema = z.object({
-  role: z.enum(["user", "admin"]),
+  role: z.enum(["user", "admin", "mp2-view-only"]),
 });
