@@ -78,8 +78,8 @@ export default function BatchEntryDialog({
   const utils = api.useUtils();
   const batchMut = api.entries.batchCreateEntries.useMutation({
     onSuccess: () => {
-      void utils.invalidate();
       toast.success("Batch entries created");
+      window.location.reload();
       form.reset();
       setStep(0);
       setCollected([]);
@@ -108,14 +108,15 @@ export default function BatchEntryDialog({
   ] as const;
 
   // Zero out numeric fields if no sample selected
-const sampleType = form.watch("sample_type");
+  const plant = form.watch("plant");
+  const sampleType = form.watch("sample_type");
+  const sampleDescription = form.watch("sample_description");
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (sampleType === "NS - No Sample") {
       numericFields.forEach((f) => form.setValue(f, "0"));
     }
-  }, [sampleType]);
+  }, [sampleType, form, numericFields]);
 
   const goNext = form.handleSubmit((data) => {
     setCollected((prev) => [...prev, data]);
@@ -264,23 +265,23 @@ const sampleType = form.watch("sample_type");
           {([
             ["fe_perc", "% Fe"],
             ["sio_perc", "% SiO₂"],
-            ...(form.getValues("plant") === "LIO" ? [["al2o3_perc", "% Al₂O₃"]] : []),
-            ...(form.getValues("plant") === "SAOB" || form.getValues("plant") === "LIO" || (form.getValues("plant") === "MP2" && form.getValues("sample_type") === "Special Sample")
+            ...(plant === "LIO" ? [["al2o3_perc", "% Al₂O₃"]] : []),
+            ...(plant === "SAOB" || plant === "LIO" || (plant === "MP2" && sampleType === "Special Sample")
               ? [["p_perc", "% P"]]
               : []),
-            ...(form.getValues("plant") === "MP2" && form.getValues("sample_description") === "Product 1 ( Mags)"
+            ...(plant === "MP2" && sampleDescription === "Product 1 ( Mags)"
               ? [["aa_fe_perc", "AA Wet Chem % Fe"]]
               : []),
             ["tio_perc", "% TiO₂"],
             ["mgo_perc", "% MgO"],
             ["cao_perc", "% CaO"],
-            ...(form.getValues("plant") === "MP2"
+            ...(plant === "MP2"
               ? [
                   ["p2o5_perc", "% P₂O₅"],
                   ["cu_perc", "% Cu"],
                 ]
               : []),
-            ...(form.getValues("plant") === "MP2" && form.getValues("sample_type") === "Special Sample"
+            ...(plant === "MP2" && sampleType === "Special Sample"
               ? [["s_perc", "S"]]
               : []),
             ["moisture", "Moisture"],
@@ -301,7 +302,7 @@ const sampleType = form.watch("sample_type");
                       pattern="^\\d{1,2}(\\.\\d{1,2})?$"
                       maxLength={6}
                       placeholder={`Enter ${label}`}
-                      disabled={form.getValues("sample_type") === "NS - No Sample"}
+                      disabled={sampleType === "NS - No Sample"}
                       value={field.value ?? ""}
                       onChange={field.onChange}
                       onBlur={field.onBlur}
@@ -314,7 +315,7 @@ const sampleType = form.watch("sample_type");
             />
           ))}
           {/* Screen fields for Special samples */}
-          {form.getValues("sample_type") === "Special Sample" &&
+          {sampleType === "Special Sample" &&
             [
               ["screen425", "Screen 425"],
               ["screen212", "Screen 212"],
