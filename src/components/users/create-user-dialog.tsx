@@ -10,6 +10,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle } from "lucide-react";
 import { useId, useState } from "react";
+import { type UserRole } from "@/lib/roles";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Icons } from "../shared/icons";
@@ -87,86 +88,87 @@ export default function CreateUserDialog() {
               email: data.email,
               password: data.password,
               name: data.name,
-              role: data.role as "admin" | "user" | "mp2-view-only",
+              role: data.role as UserRole,
             }),
           )}
         >
-          <div className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-name`}>Full Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      id={`${id}-name`}
-                      placeholder="Matt"
-                      type="text"
-                      autoComplete="given-name"
-                      required
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <div className="max-h-[70vh] overflow-y-auto pr-2 space-y-5">
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel htmlFor={`${id}-name`}>Full Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        id={`${id}-name`}
+                        placeholder="Matt"
+                        type="text"
+                        autoComplete="given-name"
+                        required
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-email`}>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      id={`${id}-email`}
-                      placeholder="hi@yourcompany.com"
-                      type="email"
-                      autoComplete="email"
-                      required
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel htmlFor={`${id}-email`}>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        id={`${id}-email`}
+                        placeholder="hi@yourcompany.com"
+                        type="email"
+                        autoComplete="email"
+                        required
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel htmlFor={`${id}-password`}>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        id={`${id}-password`}
+                        placeholder="Enter your password"
+                        type="password"
+                        autoComplete="new-password"
+                        required
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
-              name="password"
+              name="role"
               render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel htmlFor={`${id}-password`}>Password</FormLabel>
+                <FormItem>
+                  <FormLabel>Role</FormLabel>
                   <FormControl>
-                    <Input
-                      id={`${id}-password`}
-                      placeholder="Enter your password"
-                      type="password"
-                      autoComplete="new-password"
-                      required
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <FormField
-            control={form.control}
-            name="role"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Role</FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    className="gap-2"
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                    <RadioGroup
+                      className="gap-2"
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                     <FormItem>
                       <FormControl>
                         <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
@@ -182,7 +184,70 @@ export default function CreateUserDialog() {
                               id={`${id}-user-description`}
                               className="text-xs text-muted-foreground"
                             >
-                              Not able to access user management
+                              Legacy role (no plant scope)
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
+                          <RadioGroupItem
+                            value="mp2-admin-user"
+                            id={`${id}-mp2-admin-user`}
+                            aria-describedby={`${id}-mp2-admin-user-description`}
+                            className="order-1 after:absolute after:inset-0"
+                          />
+                          <div className="grid grow gap-1">
+                            <Label htmlFor={`${id}-mp2-admin-user`}>MP2 Admin User</Label>
+                            <p
+                              id={`${id}-mp2-admin-user-description`}
+                              className="text-xs text-muted-foreground"
+                            >
+                              Can create/edit MP2 lab results only
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
+                          <RadioGroupItem
+                            value="lio-admin-user"
+                            id={`${id}-lio-admin-user`}
+                            aria-describedby={`${id}-lio-admin-user-description`}
+                            className="order-1 after:absolute after:inset-0"
+                          />
+                          <div className="grid grow gap-1">
+                            <Label htmlFor={`${id}-lio-admin-user`}>LIO Admin User</Label>
+                            <p
+                              id={`${id}-lio-admin-user-description`}
+                              className="text-xs text-muted-foreground"
+                            >
+                              Can create/edit LIO lab results only
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
+                          <RadioGroupItem
+                            value="saob-admin-user"
+                            id={`${id}-saob-admin-user`}
+                            aria-describedby={`${id}-saob-admin-user-description`}
+                            className="order-1 after:absolute after:inset-0"
+                          />
+                          <div className="grid grow gap-1">
+                            <Label htmlFor={`${id}-saob-admin-user`}>SAOB Admin User</Label>
+                            <p
+                              id={`${id}-saob-admin-user-description`}
+                              className="text-xs text-muted-foreground"
+                            >
+                              Can create/edit SAOB lab results only
                             </p>
                           </div>
                         </div>
@@ -203,7 +268,7 @@ export default function CreateUserDialog() {
                               id={`${id}-admin-description`}
                               className="text-xs text-muted-foreground"
                             >
-                              Able to access user management
+                              Full access (all plants + user management)
                             </p>
                           </div>
                         </div>
@@ -230,12 +295,55 @@ export default function CreateUserDialog() {
                         </div>
                       </FormControl>
                     </FormItem>
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
+                          <RadioGroupItem
+                            value="lio-view-only"
+                            id={`${id}-lio-view-only`}
+                            aria-describedby={`${id}-lio-view-only-description`}
+                            className="order-1 after:absolute after:inset-0"
+                          />
+                          <div className="grid grow gap-1">
+                            <Label htmlFor={`${id}-lio-view-only`}>LIO View Only</Label>
+                            <p
+                              id={`${id}-lio-view-only-description`}
+                              className="text-xs text-muted-foreground"
+                            >
+                              Can view LIO lab results only
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
+                          <RadioGroupItem
+                            value="saob-view-only"
+                            id={`${id}-saob-view-only`}
+                            aria-describedby={`${id}-saob-view-only-description`}
+                            className="order-1 after:absolute after:inset-0"
+                          />
+                          <div className="grid grow gap-1">
+                            <Label htmlFor={`${id}-saob-view-only`}>SAOB View Only</Label>
+                            <p
+                              id={`${id}-saob-view-only-description`}
+                              className="text-xs text-muted-foreground"
+                            >
+                              Can view SAOB lab results only
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <Button
             type="submit"
             className="w-full"

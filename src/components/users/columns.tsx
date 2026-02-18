@@ -42,6 +42,27 @@ export const usersColumns: ColumnDef<UserWithRole>[] = [
               Admin
             </Badge>
           );
+        case "mp2-admin-user":
+          return (
+            <Badge variant="outline">
+              <ShieldCheckIcon className="mr-2 h-4 w-4" />
+              MP2 Admin User
+            </Badge>
+          );
+        case "lio-admin-user":
+          return (
+            <Badge variant="outline">
+              <ShieldCheckIcon className="mr-2 h-4 w-4" />
+              LIO Admin User
+            </Badge>
+          );
+        case "saob-admin-user":
+          return (
+            <Badge variant="outline">
+              <ShieldCheckIcon className="mr-2 h-4 w-4" />
+              SAOB Admin User
+            </Badge>
+          );
         case "user":
           return (
             <Badge variant="outline">
@@ -54,6 +75,20 @@ export const usersColumns: ColumnDef<UserWithRole>[] = [
             <Badge variant="outline">
               <ShieldIcon className="mr-2 h-4 w-4" />
               Member - MP2 View Only
+            </Badge>
+          );
+        case "lio-view-only":
+          return (
+            <Badge variant="outline">
+              <ShieldIcon className="mr-2 h-4 w-4" />
+              Member - LIO View Only
+            </Badge>
+          );
+        case "saob-view-only":
+          return (
+            <Badge variant="outline">
+              <ShieldIcon className="mr-2 h-4 w-4" />
+              Member - SAOB View Only
             </Badge>
           );
       }

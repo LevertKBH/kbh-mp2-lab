@@ -6,6 +6,7 @@ import {
   type BetterAuthUpdateUser,
   betterAuthUpdateUserSchema,
 } from "@/types/user-model";
+import { type UserRole } from "@/lib/roles";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type UserWithRole } from "better-auth/plugins";
 import { useId } from "react";
@@ -39,7 +40,7 @@ export default function UpdateUserDialog({
   const form = useForm<BetterAuthUpdateUser>({
     resolver: zodResolver(betterAuthUpdateUserSchema),
     defaultValues: {
-      role: user.role as "user" | "admin" | "mp2-view-only",
+      role: user.role as UserRole,
     },
   });
 
@@ -112,7 +113,70 @@ export default function UpdateUserDialog({
                               id={`${id}-user-description`}
                               className="text-xs text-muted-foreground"
                             >
-                              Not able to access user management
+                              Legacy role (no plant scope)
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
+                          <RadioGroupItem
+                            value="mp2-admin-user"
+                            id={`${id}-mp2-admin-user`}
+                            aria-describedby={`${id}-mp2-admin-user-description`}
+                            className="order-1 after:absolute after:inset-0"
+                          />
+                          <div className="grid grow gap-1">
+                            <Label htmlFor={`${id}-mp2-admin-user`}>MP2 Admin User</Label>
+                            <p
+                              id={`${id}-mp2-admin-user-description`}
+                              className="text-xs text-muted-foreground"
+                            >
+                              Can create/edit MP2 lab results only
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
+                          <RadioGroupItem
+                            value="lio-admin-user"
+                            id={`${id}-lio-admin-user`}
+                            aria-describedby={`${id}-lio-admin-user-description`}
+                            className="order-1 after:absolute after:inset-0"
+                          />
+                          <div className="grid grow gap-1">
+                            <Label htmlFor={`${id}-lio-admin-user`}>LIO Admin User</Label>
+                            <p
+                              id={`${id}-lio-admin-user-description`}
+                              className="text-xs text-muted-foreground"
+                            >
+                              Can create/edit LIO lab results only
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
+                          <RadioGroupItem
+                            value="saob-admin-user"
+                            id={`${id}-saob-admin-user`}
+                            aria-describedby={`${id}-saob-admin-user-description`}
+                            className="order-1 after:absolute after:inset-0"
+                          />
+                          <div className="grid grow gap-1">
+                            <Label htmlFor={`${id}-saob-admin-user`}>SAOB Admin User</Label>
+                            <p
+                              id={`${id}-saob-admin-user-description`}
+                              className="text-xs text-muted-foreground"
+                            >
+                              Can create/edit SAOB lab results only
                             </p>
                           </div>
                         </div>
@@ -133,7 +197,7 @@ export default function UpdateUserDialog({
                               id={`${id}-admin-description`}
                               className="text-xs text-muted-foreground"
                             >
-                              Able to access user management
+                              Full access (all plants + user management)
                             </p>
                           </div>
                         </div>
@@ -155,6 +219,48 @@ export default function UpdateUserDialog({
                               className="text-xs text-muted-foreground"
                             >
                               Can view MP2 lab results only
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
+                          <RadioGroupItem
+                            value="lio-view-only"
+                            id={`${id}-lio-view-only`}
+                            aria-describedby={`${id}-lio-view-only-description`}
+                            className="order-1 after:absolute after:inset-0"
+                          />
+                          <div className="grid grow gap-1">
+                            <Label htmlFor={`${id}-lio-view-only`}>LIO View Only</Label>
+                            <p
+                              id={`${id}-lio-view-only-description`}
+                              className="text-xs text-muted-foreground"
+                            >
+                              Can view LIO lab results only
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent">
+                          <RadioGroupItem
+                            value="saob-view-only"
+                            id={`${id}-saob-view-only`}
+                            aria-describedby={`${id}-saob-view-only-description`}
+                            className="order-1 after:absolute after:inset-0"
+                          />
+                          <div className="grid grow gap-1">
+                            <Label htmlFor={`${id}-saob-view-only`}>SAOB View Only</Label>
+                            <p
+                              id={`${id}-saob-view-only-description`}
+                              className="text-xs text-muted-foreground"
+                            >
+                              Can view SAOB lab results only
                             </p>
                           </div>
                         </div>

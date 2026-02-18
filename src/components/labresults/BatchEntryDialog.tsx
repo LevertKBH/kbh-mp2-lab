@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useId, useEffect } from "react";
+import { useState, useId, useEffect, useMemo } from "react";
 import type { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +8,8 @@ import { toast } from "sonner";
 
 import { api } from "@/trpc/react";
 import { entrySchema } from "@/lib/zod/labresults";
+import { authClient } from "@/lib/auth-client";
+import { getAllowedPlants, type Plant } from "@/lib/roles";
 import {
   sampleDescriptionValues,
   validateHourValues,
@@ -42,6 +44,13 @@ export default function BatchEntryDialog({
   const id = useId();
   const [step, setStep] = useState(0);
   const [collected, setCollected] = useState<EntryData[]>([]);
+  const session = authClient.useSession();
+  const allowedPlants = getAllowedPlants(session.data?.user.role ?? null);
+  const plantOptions = allowedPlants.length
+    ? plantValues.filter((plant) =>
+        allowedPlants.includes(plant.value as Plant),
+      )
+    : plantValues;
 
   const form = useForm<EntryData>({
     resolver: zodResolver(entrySchema),
@@ -49,7 +58,7 @@ export default function BatchEntryDialog({
       date: new Date().toISOString().split("T")[0],
       hour: validateHourValues[0]!.value,
       sample_type: sampleTypeValues[0]!.value,
-      plant: plantValues[0]!.value,
+      plant: (allowedPlants[0] ?? plantValues[0]!.value) as string,
       sample_description: sampleDescriptionValues[0]!.value,
       fe_perc: "",
       sio_perc: "",
@@ -74,8 +83,16 @@ export default function BatchEntryDialog({
       aa_fe_perc: ""
     },
   });
+  useEffect(() => {
+    if (allowedPlants.length === 0) return;
+    const currentPlant = form.getValues("plant") as Plant;
+    if (!allowedPlants.includes(currentPlant)) {
+      form.setValue("plant", allowedPlants[0] ?? plantValues[0]!.value);
+    }
+  }, [allowedPlants, form]);
 
   const utils = api.useUtils();
+  const { data: existingEntries = [] } = api.entries.getAllEntries.useQuery();
   const batchMut = api.entries.batchCreateEntries.useMutation({
     onSuccess: () => {
       toast.success("Batch entries created");
@@ -111,6 +128,34 @@ export default function BatchEntryDialog({
   const plant = form.watch("plant");
   const sampleType = form.watch("sample_type");
   const sampleDescription = form.watch("sample_description");
+  const getEntryKey = (entry: Pick<EntryData, "date" | "hour" | "plant" | "sample_description">) =>
+    [
+      entry.date,
+      entry.hour,
+      entry.plant,
+      entry.sample_description.trim().toLowerCase(),
+    ].join("|");
+  const existingEntryKeys = useMemo(
+    () =>
+      new Set(
+        existingEntries.map((entry) =>
+          getEntryKey({
+            date: entry.date,
+            hour: entry.hour,
+            plant: entry.plant,
+            sample_description: entry.sample_description,
+          }),
+        ),
+      ),
+    [existingEntries],
+  );
+  const hasDuplicate = (entry: EntryData, pending: EntryData[]) => {
+    const key = getEntryKey(entry);
+    return (
+      existingEntryKeys.has(key) ||
+      pending.some((current) => getEntryKey(current) === key)
+    );
+  };
 
   useEffect(() => {
     if (sampleType === "NS - No Sample") {
@@ -119,6 +164,13 @@ export default function BatchEntryDialog({
   }, [sampleType, form, numericFields]);
 
   const goNext = form.handleSubmit((data) => {
+    if (hasDuplicate(data, collected)) {
+      toast.error("Duplicate consignment entry", {
+        description:
+          "An entry with the same date, hour, plant and consignment already exists.",
+      });
+      return;
+    }
     setCollected((prev) => [...prev, data]);
     const nextIndex = step + 1;
     const nextDesc = sampleDescriptionValues[nextIndex]!.value;
@@ -154,6 +206,13 @@ export default function BatchEntryDialog({
   });
 
   const finish = form.handleSubmit((data) => {
+    if (hasDuplicate(data, collected)) {
+      toast.error("Duplicate consignment entry", {
+        description:
+          "An entry with the same date, hour, plant and consignment already exists.",
+      });
+      return;
+    }
     batchMut.mutate([...collected, data]);
   });
 
@@ -253,7 +312,7 @@ export default function BatchEntryDialog({
                   <FormCombobox
                     field={field}
                     onSelect={field.onChange}
-                    options={plantValues}
+                    options={plantOptions}
                     disabled={step > 0}
                   />
                 </FormControl>

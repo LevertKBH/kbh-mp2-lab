@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { USER_ROLES } from "@/lib/roles";
 import {
   adminProcedure,
   createTRPCRouter,
@@ -53,7 +54,7 @@ export const usersRouter = createTRPCRouter({
     .input(
       z.object({
         userId: z.string(),
-        role: z.enum(["user", "admin", "mp2-view-only"]),
+        role: z.enum(USER_ROLES),
       }),
     )
     .mutation(async ({ input, ctx }) => {

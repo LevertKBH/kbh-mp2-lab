@@ -1,4 +1,6 @@
 import { entrySchema } from "@/lib/zod/labresults";
+import { authClient } from "@/lib/auth-client";
+import { getAllowedPlants, type Plant } from "@/lib/roles";
 import { api } from "@/trpc/react";
 import { type PrismaModels } from "@/types/db-models";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,6 +45,13 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
   onOpenChange,
 }) => {
   const id = useId();
+  const session = authClient.useSession();
+  const allowedPlants = getAllowedPlants(session.data?.user.role ?? null);
+  const plantOptions = allowedPlants.length
+    ? plantValues.filter((plant) =>
+        allowedPlants.includes(plant.value as Plant),
+      )
+    : plantValues;
 
   const form = useForm<z.infer<typeof entrySchema>>({
     resolver: zodResolver(entrySchema),
@@ -77,6 +86,7 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
   });
 
   const utils = api.useUtils();
+  const { data: existingEntries = [] } = api.entries.getAllEntries.useQuery();
   const updateEntry = api.entries.updateEntry.useMutation({
     onSuccess: () => {
       window.location.reload();
@@ -133,6 +143,16 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
     }
   }, [selectedSampleType]);
   const selectedPlant = form.watch("plant");
+  const isDuplicateEntry = (data: z.infer<typeof entrySchema>) =>
+    existingEntries.some(
+      (existing) =>
+        existing.id !== entry.id &&
+        existing.date === data.date &&
+        existing.hour === data.hour &&
+        existing.plant === data.plant &&
+        existing.sample_description.trim().toLowerCase() ===
+          data.sample_description.trim().toLowerCase(),
+    );
   return (
     <ResponsiveModal
       title="Edit Entry"
@@ -152,9 +172,16 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
       <Form {...form}>
         <form
           className="space-y-5"
-          onSubmit={form.handleSubmit(() =>
-            updateEntry.mutate({ id: entry.id, ...form.getValues() }),
-          )}
+          onSubmit={form.handleSubmit((data) => {
+            if (isDuplicateEntry(data)) {
+              toast.error("Duplicate consignment entry", {
+                description:
+                  "An entry with the same date, hour, plant and consignment already exists.",
+              });
+              return;
+            }
+            updateEntry.mutate({ id: entry.id, ...data });
+          })}
         >
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
 
@@ -169,7 +196,7 @@ const EditEntryDialog: FC<EditEntryDialogProps> = ({
                   onSelect={(value) => {
                     field.onChange(value);
                   }}
-                  options={plantValues}
+                  options={plantOptions}
                 />
                 <FormMessage />
               </FormItem>

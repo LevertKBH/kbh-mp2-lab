@@ -14,11 +14,13 @@ import {
   validateHourValues
 } from "@/constants/entries";
 import { entrySchema } from "@/lib/zod/labresults";
+import { authClient } from "@/lib/auth-client";
+import { getAllowedPlants, type Plant } from "@/lib/roles";
 import { api } from "@/trpc/react";
 import { type BasicKeyValue } from "@/types/generic";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle } from "lucide-react";
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
@@ -34,6 +36,13 @@ import {
 
 export default function CreateEntryDialog() {
   const id = useId();
+  const session = authClient.useSession();
+  const allowedPlants = getAllowedPlants(session.data?.user.role ?? null);
+  const plantOptions = allowedPlants.length
+    ? plantValues.filter((plant) =>
+        allowedPlants.includes(plant.value as Plant),
+      )
+    : plantValues;
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPlantEquipment, setSelectedPlantEquipment] = useState<
@@ -46,7 +55,7 @@ export default function CreateEntryDialog() {
       date: new Date().toISOString().slice(0, 10), // 'YYYY-MM-DD'
       hour: "06h00",
       sample_type: "Normal Sample",
-      plant: "MP2",
+      plant: allowedPlants[0] ?? "MP2",
       sample_description: "Plant Feed - Frm CNV -2",
       fe_perc: "",
       sio_perc: "",
@@ -71,8 +80,16 @@ export default function CreateEntryDialog() {
       aa_fe_perc: ""      
     },
   });
+  useEffect(() => {
+    if (allowedPlants.length === 0) return;
+    const currentPlant = form.getValues("plant") as Plant;
+    if (!allowedPlants.includes(currentPlant)) {
+      form.setValue("plant", allowedPlants[0] ?? "MP2");
+    }
+  }, [allowedPlants, form]);
 
   const utils = api.useUtils();
+  const { data: existingEntries = [] } = api.entries.getAllEntries.useQuery();
   const createEntry = api.entries.createEntry.useMutation({
     onSuccess: () => {
       window.location.reload();
@@ -87,6 +104,15 @@ export default function CreateEntryDialog() {
   const selectedSampleType = form.watch("sample_type");
   const selectedPlant = form.watch("plant");
   const selectedSampleDesc = form.watch("sample_description");
+  const isDuplicateEntry = (data: z.infer<typeof entrySchema>) =>
+    existingEntries.some(
+      (entry) =>
+        entry.date === data.date &&
+        entry.hour === data.hour &&
+        entry.plant === data.plant &&
+        entry.sample_description.trim().toLowerCase() ===
+          data.sample_description.trim().toLowerCase(),
+    );
   return (
     <ResponsiveModal
       title="Add Lab Results"
@@ -112,7 +138,16 @@ export default function CreateEntryDialog() {
       <Form {...form}>
         <form
           className="space-y-5"
-          onSubmit={form.handleSubmit((data) => createEntry.mutate(data))}
+          onSubmit={form.handleSubmit((data) => {
+            if (isDuplicateEntry(data)) {
+              toast.error("Duplicate consignment entry", {
+                description:
+                  "An entry with the same date, hour, plant and consignment already exists.",
+              });
+              return;
+            }
+            createEntry.mutate(data);
+          })}
         >
           <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
 
@@ -148,7 +183,7 @@ export default function CreateEntryDialog() {
                         // Add more fields as in your defaultValues
                       });
                     }}
-                    options={plantValues}
+                    options={plantOptions}
                   />
                   <FormMessage />
                 </FormItem>
@@ -876,4 +911,3 @@ export default function CreateEntryDialog() {
     </ResponsiveModal>
   );
 }
-

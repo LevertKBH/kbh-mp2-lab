@@ -1,4 +1,5 @@
 import { authClient } from "@/lib/auth-client";
+import { canManagePlant, isPlantValue } from "@/lib/roles";
 import { type PrismaModels } from "@/types/db-models";
 import {
   CheckIcon,
@@ -31,6 +32,9 @@ const EntryRowActions: FC<EntryRowActionsProps> = ({ entry }) => {
   const [open, setOpen] = useState(false);
   const [openResolve, setOpenResolve] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const canManage = isPlantValue(entry.plant)
+    ? canManagePlant(session.data?.user.role ?? null, entry.plant)
+    : false;
 
   return (
     <DropdownMenu>
@@ -41,7 +45,7 @@ const EntryRowActions: FC<EntryRowActionsProps> = ({ entry }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {session.data?.user.role === "admin" && (
+        {canManage && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem

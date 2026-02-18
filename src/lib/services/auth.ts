@@ -7,7 +7,15 @@ export type CreateUserBody = {
   name: string;
   email: string;
   password: string;
-  role: "admin" | "user" | "mp2-view-only";
+  role:
+    | "admin"
+    | "user"
+    | "mp2-admin-user"
+    | "lio-admin-user"
+    | "saob-admin-user"
+    | "mp2-view-only"
+    | "lio-view-only"
+    | "saob-view-only";
 };
 
 export async function signIn(email: string, password: string) {

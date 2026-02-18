@@ -1,5 +1,12 @@
 import { entrySchema } from "@/lib/zod/labresults";
 import {
+  canManagePlant,
+  getRolePlant,
+  isGlobalAdmin,
+  isPlantAdminRole,
+  isPlantValue,
+} from "@/lib/roles";
+import {
   adminProcedure,
   createTRPCRouter,
   protectedProcedure,
@@ -9,6 +16,24 @@ import { z } from "zod";
 
 export const entriesRouter = createTRPCRouter({
   getAllEntries: protectedProcedure.query(async ({ ctx }) => {
+    const role = ctx.session.user.role ?? null;
+    if (!isGlobalAdmin(role)) {
+      const scopedPlant = getRolePlant(role);
+      if (!scopedPlant) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to lab results.",
+        });
+      }
+      const entries = await ctx.db.labInspection.findMany({
+        where: { plant: scopedPlant },
+        orderBy: {
+          created_at: "desc",
+        },
+      });
+      return entries;
+    }
+
     const entries = await ctx.db.labInspection.findMany({
       orderBy: {
         created_at: "desc",
@@ -29,21 +54,49 @@ export const entriesRouter = createTRPCRouter({
     }))
     .query(async ({ ctx, input }) => {
       const { startDate, endDate, plant, hours } = input;
+      const role = ctx.session.user.role ?? null;
+      const scopedPlant = isGlobalAdmin(role) ? null : getRolePlant(role);
+      if (!isGlobalAdmin(role) && !scopedPlant) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to lab results.",
+        });
+      }
+      if (scopedPlant && plant && plant !== scopedPlant) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to this plant's results.",
+        });
+      }
+      const plantFilter = scopedPlant ?? plant ?? null;
       return await ctx.db.labInspection.findMany({
         where: {
           AND: [
             ...(startDate ? [{ date: { gte: startDate } }] : []),
             ...(endDate ? [{ date: { lte: endDate } }] : []),
-            ...(plant ? [{ plant }] : []),
+            ...(plantFilter ? [{ plant: plantFilter }] : []),
             ...(hours ? [{ hour: { in: hours } }] : []),
           ],
         },
         orderBy: { created_at: "desc" },
       });
     }),
-  createEntry: adminProcedure
+  createEntry: protectedProcedure
     .input(entrySchema)
     .mutation(async ({ ctx, input }) => {
+      const role = ctx.session.user.role ?? null;
+      if (!isGlobalAdmin(role) && !isPlantAdminRole(role)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to create lab results.",
+        });
+      }
+      if (!isPlantValue(input.plant) || !canManagePlant(role, input.plant)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to this plant.",
+        });
+      }
       try {
         const entry = await ctx.db.labInspection.create({
           data: {
@@ -124,9 +177,25 @@ export const entriesRouter = createTRPCRouter({
 /**
    * Create multiple entries in batch.
    */
-  batchCreateEntries: adminProcedure
+  batchCreateEntries: protectedProcedure
     .input(z.array(entrySchema))
     .mutation(async ({ ctx, input }) => {
+      const role = ctx.session.user.role ?? null;
+      if (!isGlobalAdmin(role) && !isPlantAdminRole(role)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to create lab results.",
+        });
+      }
+      const allPlantsValid = input.every(
+        (entry) => isPlantValue(entry.plant) && canManagePlant(role, entry.plant),
+      );
+      if (!allPlantsValid) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to one or more plants.",
+        });
+      }
       const created = await ctx.db.$transaction(
         input.map((entry) =>
           ctx.db.labInspection.create({
@@ -173,11 +242,33 @@ export const entriesRouter = createTRPCRouter({
       });
       return created;
     }),
-  deleteEntry: adminProcedure
+  deleteEntry: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      const role = ctx.session.user.role ?? null;
+      if (!isGlobalAdmin(role) && !isPlantAdminRole(role)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to delete lab results.",
+        });
+      }
       try {
         const { id } = input;
+        const existing = await ctx.db.labInspection.findUnique({
+          where: { id },
+        });
+        if (!existing || !isPlantValue(existing.plant)) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Entry not found.",
+          });
+        }
+        if (!canManagePlant(role, existing.plant)) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You do not have access to this plant.",
+          });
+        }
         const deletedlabInspection = await ctx.db.labInspection.delete({
           where: { id },
         });
@@ -235,9 +326,22 @@ export const entriesRouter = createTRPCRouter({
         });
       }
     }),
-  updateEntry: adminProcedure
+  updateEntry: protectedProcedure
     .input(entrySchema)
     .mutation(async ({ ctx, input }) => {
+      const role = ctx.session.user.role ?? null;
+      if (!isGlobalAdmin(role) && !isPlantAdminRole(role)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to update lab results.",
+        });
+      }
+      if (!isPlantValue(input.plant) || !canManagePlant(role, input.plant)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to this plant.",
+        });
+      }
       try {
         const { id, ...rest } = input;
 

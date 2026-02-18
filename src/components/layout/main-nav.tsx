@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 
 import { linksConfig } from "@/config/links";
 import { type authClient } from "@/lib/auth-client";
+import { getRolePlant } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 
 export function MainNav({
@@ -14,6 +15,14 @@ export function MainNav({
   session: typeof authClient.$Infer.Session;
 }) {
   const pathname = usePathname();
+  const rolePlant = getRolePlant(session.user.role ?? null);
+  const logoSrc =
+    rolePlant === "SAOB"
+      ? "/saob_logo.png"
+      : rolePlant === "LIO"
+        ? "/lio_logo.png"
+        : "/favicon.png";
+  const logoAlt = rolePlant ? `${rolePlant} Lab Results` : "MP2 Lab Results";
 
   return (
     <div className="mr-4 hidden md:flex">
@@ -23,8 +32,8 @@ export function MainNav({
       >
         <div className="relative mt-2 h-10 w-16">
           <img
-            src="/favicon.png"
-            alt="MP2 Lab Results"
+            src={logoSrc}
+            alt={logoAlt}
             className="h-full w-full"
           />
         </div>
