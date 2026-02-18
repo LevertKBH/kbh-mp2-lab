@@ -92,7 +92,8 @@ export default function BatchEntryDialog({
   }, [allowedPlants, form]);
 
   const utils = api.useUtils();
-  const { data: existingEntries = [] } = api.entries.getAllEntries.useQuery();
+  const { data: existingEntries = [], isLoading: isLoadingExistingEntries } =
+    api.entries.getAllEntries.useQuery();
   const batchMut = api.entries.batchCreateEntries.useMutation({
     onSuccess: () => {
       toast.success("Batch entries created");
@@ -164,6 +165,12 @@ export default function BatchEntryDialog({
   }, [sampleType, form, numericFields]);
 
   const goNext = form.handleSubmit((data) => {
+    if (step === 0 && isLoadingExistingEntries) {
+      toast.error("Please wait", {
+        description: "Validating existing consignments before continuing.",
+      });
+      return;
+    }
     if (hasDuplicate(data, collected)) {
       toast.error("Duplicate consignment entry", {
         description:
@@ -206,6 +213,12 @@ export default function BatchEntryDialog({
   });
 
   const finish = form.handleSubmit((data) => {
+    if (isLoadingExistingEntries) {
+      toast.error("Please wait", {
+        description: "Validating existing consignments before submitting.",
+      });
+      return;
+    }
     if (hasDuplicate(data, collected)) {
       toast.error("Duplicate consignment entry", {
         description:
@@ -416,13 +429,25 @@ export default function BatchEntryDialog({
           <div className="flex space-x-2 pt-4">
             {step < sampleDescriptionValues.length - 1 ? (
               <>
-                <Button onClick={goNext}>Next</Button>
-                <Button variant="secondary" onClick={finish} disabled={batchMut.status === "pending"}>
+                <Button type="button" onClick={goNext} disabled={isLoadingExistingEntries}>
+                  Next
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={finish}
+                  disabled={batchMut.status === "pending" || isLoadingExistingEntries}
+                >
                   {batchMut.status === "pending" ? "Processing..." : "Complete"}
                 </Button>
               </>
             ) : (
-              <Button variant="secondary" onClick={finish} disabled={batchMut.status === "pending"}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={finish}
+                disabled={batchMut.status === "pending" || isLoadingExistingEntries}
+              >
                 {batchMut.status === "pending" ? "Processing..." : "Complete"}
               </Button>
             )}
